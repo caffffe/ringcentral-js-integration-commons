@@ -1,12 +1,12 @@
 import RcModule from '../../lib/RcModule';
 import isBlank from '../../lib/isBlank';
 import normalizeNumber from '../../lib/normalizeNumber';
+import ensureExist from '../../lib/ensureExist';
 import actionTypes from './actionTypes';
-import moduleStatuses from '../../enums/moduleStatuses';
 import getContactsReducer from './getContactsReducer';
 
 function addPhoneToContact(contact, phone, type) {
-  const phoneNumber = normalizeNumber(phone);
+  const phoneNumber = normalizeNumber({ phoneNumber: phone });
   if (isBlank(phoneNumber)) {
     return;
   }
@@ -23,21 +23,26 @@ function addPhoneToContact(contact, phone, type) {
   }
 }
 
+const DEFAULT_TTL = 30 * 60 * 1000;
 export default class Contacts extends RcModule {
   constructor({
+    client,
     addressBook,
     accountExtension,
     accountPhoneNumber,
+    ttl = DEFAULT_TTL,
     ...options,
   }) {
     super({
       ...options,
       actionTypes,
     });
-    this._addressBook = addressBook;
-    this._accountExtension = accountExtension;
-    this._accountPhoneNumber = accountPhoneNumber;
+    this._addressBook = this::ensureExist(addressBook, 'addressBook');
+    this._accountExtension = this::ensureExist(accountExtension, 'accountExtension');
+    this._accountPhoneNumber = this::ensureExist(accountPhoneNumber, 'accountPhoneNumber');
+    this._client = this::ensureExist(client, 'client');
     this._reducer = getContactsReducer(this.actionTypes);
+    this._ttl = ttl;
 
     this.addSelector(
       'companyContacts',
@@ -57,6 +62,7 @@ export default class Contacts extends RcModule {
             lastName: extension.contact && extension.contact.lastName,
             email: extension.contact && extension.contact.email,
             extensionNumber: extension.ext,
+            hasProfileImage: extension.hasProfileImage,
             phoneNumbers: [],
           };
           if (isBlank(contact.extensionNumber)) {
@@ -65,7 +71,7 @@ export default class Contacts extends RcModule {
           const phones = extensionToPhoneNumberMap[contact.extensionNumber];
           if (phones && phones.length > 0) {
             phones.forEach((phone) => {
-              addPhoneToContact(contact, phone, 'directPhone');
+              addPhoneToContact(contact, phone.phoneNumber, 'directPhone');
             });
           }
           newExtensions.push(contact);
@@ -141,6 +147,79 @@ export default class Contacts extends RcModule {
     });
   }
 
+  matchPhoneNumber(phone) {
+    const result = [];
+    const phoneNumber = normalizeNumber({ phoneNumber: phone });
+    const matchContact = (contact) => {
+      let found = contact.extensionNumber && contact.extensionNumber === phoneNumber;
+      if (!found) {
+        contact.phoneNumbers.forEach((contactPhoneNumber) => {
+          if (!found && contactPhoneNumber.phoneNumber === phoneNumber) {
+            found = true;
+          }
+        });
+      }
+      if (!found) {
+        return;
+      }
+      const matchedContact = {
+        ...contact,
+        phoneNumbers: [
+          ...contact.phoneNumbers
+        ],
+        entityType: 'contact',
+        name: `${contact.firstName} ${contact.lastName}`,
+      };
+      if (contact.extensionNumber) {
+        matchedContact.phoneNumbers.push({
+          phoneType: 'extension',
+          phoneNumber: contact.extensionNumber,
+        });
+      }
+      result.push(matchedContact);
+    };
+    this.companyContacts.forEach(matchContact);
+    this.personalContacts.forEach(matchContact);
+    return result;
+  }
+
+  matchContacts({ phoneNumbers }) {
+    const result = {};
+    phoneNumbers.forEach((phoneNumber) => {
+      result[phoneNumber] = this.matchPhoneNumber(phoneNumber);
+    });
+    return result;
+  }
+
+  async getImageProfile(contact) {
+    if (contact.type === 'company' && contact.id && contact.hasProfileImage) {
+      const imageId = `${contact.type}${contact.id}`;
+      if (
+        this.profileImages[imageId] &&
+        (Date.now() - this.profileImages[imageId].timestamp < this._ttl)
+      ) {
+        return this.profileImages[imageId].url;
+      }
+      try {
+        const response = await this._client.account().extension(contact.id).profileImage().get();
+        const imageUrl = URL.createObjectURL(await response._response.blob());
+        const image = {
+          id: imageId,
+          url: imageUrl,
+        };
+        this.store.dispatch({
+          type: this.actionTypes.fetchImageSuccess,
+          image,
+        });
+        return image.url;
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+    return null;
+  }
+
   get status() {
     return this.state.status;
   }
@@ -151,5 +230,9 @@ export default class Contacts extends RcModule {
 
   get personalContacts() {
     return this._selectors.personalContacts();
+  }
+
+  get profileImages() {
+    return this.state.profileImages;
   }
 }

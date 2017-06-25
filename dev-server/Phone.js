@@ -218,6 +218,11 @@ export default class Phone extends RcModule {
       getState: () => this.state.blockedNumber,
     }));
     reducers.blockedNumber = this.blockedNumber.reducer;
+    this.addModule('contactMatcher', new ContactMatcher({
+      storage: this.storage,
+      getState: () => this.state.contactMatcher,
+    }));
+    reducers.contactMatcher = this.contactMatcher.reducer;
     this.addModule('webphone', new Webphone({
       appKey: config.appKey,
       appName: 'RingCentral Integration',
@@ -227,6 +232,8 @@ export default class Phone extends RcModule {
       client: this.client,
       storage: this.storage,
       rolesAndPermissions: this.rolesAndPermissions,
+      contactMatcher: this.contactMatcher,
+      extensionDevice: this.extensionDevice,
       getState: () => this.state.webphone,
     }));
     reducers.webphone = this.webphone.reducer;
@@ -346,11 +353,6 @@ export default class Phone extends RcModule {
       getState: () => this.state.callHistory,
     }));
     reducers.callHistory = this.callHistory.reducer;
-    this.addModule('contactMatcher', new ContactMatcher({
-      storage: this.storage,
-      getState: () => this.state.contactMatcher,
-    }));
-    reducers.contactMatcher = this.contactMatcher.reducer;
     this.addModule('activityMatcher', new ActivityMatcher({
       storage: this.storage,
       getState: () => this.state.activityMatcher,
@@ -436,12 +438,18 @@ export default class Phone extends RcModule {
     }));
     reducers.addressBook = this.addressBook.reducer;
     this.addModule('contacts', new Contacts({
+      client: this.client,
       addressBook: this.addressBook,
       accountPhoneNumber: this.accountPhoneNumber,
       accountExtension: this.accountExtension,
       getState: () => this.state.contacts,
     }));
     reducers.contacts = this.contacts.reducer;
+    this.contactMatcher.addSearchProvider({
+      name: 'contacts',
+      searchFn: async ({ queries }) => this.contacts.matchContacts({ phoneNumbers: queries }),
+      readyCheckFn: () => this.contacts.ready,
+    });
     this.addModule('conversationLogger', new ConversationLogger({
       auth: this.auth,
       contactMatcher: this.contactMatcher,
