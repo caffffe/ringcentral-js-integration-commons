@@ -6,6 +6,7 @@ import getCallReducer from './getCallReducer';
 import actionTypes from './actionTypes';
 import callingModes from '../CallingSettings/callingModes';
 import callErrors from './callErrors';
+import ringoutErrors from '../Ringout/ringoutErrors';
 
 describe('Call Unit Test', () => {
   let call;
@@ -352,6 +353,8 @@ describe('Call Unit Test', () => {
     });
     it(`_connect and webphone.disconnect should not be called once 
      when call._callingSettings.callingMode is equal to oldCallSettingMode
+     and oldCallSettingMode is not equal to callingModes.webphone
+     and call._callSettingMode is not equal to callingModes.webphone
      `, async () => {
       call._callingSettingMode = callingModes.ringout;
       call._callingSettings = {
@@ -377,8 +380,10 @@ describe('Call Unit Test', () => {
       sinon.stub(call, 'toNumber', { get: () => '' });
       sinon.stub(call, 'lastCallNumber', { get: () => '123' });
       sinon.stub(call, 'onToNumberChange');
+      sinon.stub(call, '_getValidatedNumbers');
       call.onCall();
       sinon.assert.calledOnce(call.onToNumberChange);
+      sinon.assert.notCalled(call._getValidatedNumbers);
     });
     it(`warning noToNumber should be called once
     when isIdle is true
@@ -389,6 +394,7 @@ describe('Call Unit Test', () => {
       sinon.stub(call, 'toNumber', { get: () => '' });
       sinon.stub(call, 'lastCallNumber', { get: () => undefined });
       sinon.stub(call, 'onToNumberChange');
+      sinon.stub(call, '_getValidatedNumbers');
       call._alert = {
         warning: sinon.stub().callsFake(() => {})
       };
@@ -398,28 +404,167 @@ describe('Call Unit Test', () => {
         call._alert.warning,
         { message: callErrors.noToNumber }
       );
+      sinon.assert.notCalled(call.onToNumberChange);
+      sinon.assert.notCalled(call._getValidatedNumbers);
     });
     it(`_getValidatedNumbers should be called once
     when isIdle is true
-    and call.toNumber.trim.length is not equal to 0`,
+    and call.toNumber.trim.length is not equal to 0
+    and call.lastCallNumber is  equal to undefined`,
     () => {
       sinon.stub(call, 'isIdle', { get: () => true });
       sinon.stub(call, 'toNumber', { get: () => '123' });
+      sinon.stub(call, 'lastCallNumber', { get: () => undefined });
       sinon.stub(call, '_getValidatedNumbers');
+      sinon.stub(call, 'onToNumberChange');
       call.onCall();
       sinon.assert.calledOnce(call._getValidatedNumbers);
+      sinon.assert.notCalled(call.onToNumberChange);
+    });
+    it(`_getValidatedNumbers should be called once
+    when isIdle is true
+    and call.toNumber.trim.length is not equal to 0
+    and call.lastCallNumber is not equal to null`,
+    () => {
+      sinon.stub(call, 'isIdle', { get: () => true });
+      sinon.stub(call, 'toNumber', { get: () => '123' });
+      sinon.stub(call, 'lastCallNumber', { get: () => '123' });
+      sinon.stub(call, '_getValidatedNumbers');
+      sinon.stub(call, 'onToNumberChange');
+      call.onCall();
+      sinon.assert.calledOnce(call._getValidatedNumbers);
+      sinon.assert.notCalled(call.onToNumberChange);
     });
     it(`_makeCall should be called once
     when isIdle is true
     and call.toNumber.trim.length is not equal to 0
-    and validatedNumbers is not equal to undefined`,
+    and validatedNumbers is not equal to null`,
     async () => {
       sinon.stub(call, 'isIdle', { get: () => true });
       sinon.stub(call, 'toNumber', { get: () => '123' });
+      sinon.stub(call, 'onToNumberChange');
       sinon.stub(call, '_getValidatedNumbers').callsFake(async () => '123');
       sinon.stub(call, '_makeCall');
       await call.onCall();
+      sinon.assert.notCalled(call.onToNumberChange);
       sinon.assert.calledOnce(call._makeCall);
+    });
+    it(`should catch error and alert warning connectFailed
+    when isIdle is true
+    and call.toNumber.trim.length is not equal to 0
+    and validatedNumbers is not equal to null
+    and _makeCall throws error`,
+    async () => {
+      sinon.stub(call, 'isIdle', { get: () => true });
+      sinon.stub(call, 'toNumber', { get: () => '123' });
+      sinon.stub(call, 'lastCallNumber', { get: () => '123' });
+      sinon.stub(call, 'onToNumberChange');
+      sinon.stub(call, '_getValidatedNumbers').callsFake(() => ['123']);
+      sinon.stub(call, '_makeCall').throws(new Error({ message: ringoutErrors.firstLegConnectFailed }));
+      call._alert = {
+        warning: sinon.stub.callsFake(() => {}),
+        danger: sinon.stub.callsFake(() => {})
+      };
+      sinon.stub(call, '_alert');
+      try {
+        await call.onCall();
+      } catch (error) {
+        sinon.assert.calledWith(call._alert.warning, {
+          message: callErrors.connectFailed,
+          payload: { message: ringoutErrors.firstLegConnectFailed }
+        });
+      }
+    });
+    it(`should catch error and alert warning networkError
+    when isIdle is true
+    and call.toNumber.trim.length is not equal to 0
+    and validatedNumbers is not equal to null
+    and _makeCall throws error failed to fetch`,
+    async () => {
+      sinon.stub(call, 'isIdle', { get: () => true });
+      sinon.stub(call, 'toNumber', { get: () => '123' });
+      sinon.stub(call, 'lastCallNumber', { get: () => '123' });
+      sinon.stub(call, 'onToNumberChange');
+      sinon.stub(call, '_getValidatedNumbers').callsFake(() => ['123']);
+      sinon.stub(call, '_makeCall').throws(new Error({ message: 'Failed to fetch' }));
+      call._alert = {
+        warning: sinon.stub.callsFake(() => {}),
+        danger: sinon.stub.callsFake(() => {})
+      };
+      sinon.stub(call, '_alert');
+      try {
+        await call.onCall();
+      } catch (error) {
+        sinon.assert.calledWith(call._alert.danger, {
+          message: callErrors.networkError,
+          payload: { message: 'Failed to fetch' }
+        });
+      }
+    });
+    it(`should catch error and alert danger internalError
+    when isIdle is true
+    and call.toNumber.trim.length is not equal to 0
+    and validatedNumbers is not equal to null
+    and _makeCall throws error`,
+    async () => {
+      sinon.stub(call, 'isIdle', { get: () => true });
+      sinon.stub(call, 'toNumber', { get: () => '123' });
+      sinon.stub(call, 'lastCallNumber', { get: () => '123' });
+      sinon.stub(call, 'onToNumberChange');
+      sinon.stub(call, '_getValidatedNumbers').callsFake(() => ['123']);
+      sinon.stub(call, '_makeCall').throws(new Error({ message: 'foo' }));
+      call._alert = {
+        warning: sinon.stub.callsFake(() => {}),
+        danger: sinon.stub.callsFake(() => {})
+      };
+      sinon.stub(call, '_alert');
+      try {
+        await call.onCall();
+      } catch (error) {
+        sinon.assert.calledWith(call._alert.danger, {
+          message: callErrors.internalError,
+          payload: { message: 'foo' }
+        });
+      }
+    });
+    it(`should not alert danger and warning
+    when isIdle is true
+    and call.toNumber.trim.length is not equal to 0
+    and validatedNumbers is not equal to null
+    and _makeCall throws error Refresh token has expired`,
+    async () => {
+      sinon.stub(call, 'isIdle', { get: () => true });
+      sinon.stub(call, 'toNumber', { get: () => '123' });
+      sinon.stub(call, 'lastCallNumber', { get: () => '123' });
+      sinon.stub(call, 'onToNumberChange');
+      sinon.stub(call, '_getValidatedNumbers').callsFake(() => ['123']);
+      sinon.stub(call, '_makeCall').throws(new Error({ message: 'Refresh token has expired' }));
+      call._alert = {
+        warning: sinon.stub.callsFake(() => {}),
+        danger: sinon.stub.callsFake(() => {})
+      };
+      sinon.stub(call, '_alert');
+      try {
+        await call.onCall();
+      } catch (error) {
+        sinon.assert.notCalled(call._alert.warning);
+        sinon.assert.notCalled(call._alert.danger);
+      }
+    });
+    it(`onToNumberChange and _getValidatedNumbers and _makeCall should not be called
+    when isIdle is false
+    and call.toNumber.trim.length is not equal to 0`,
+    async () => {
+      sinon.stub(call, 'isIdle', { get: () => false });
+      sinon.stub(call, 'toNumber', { get: () => '123' });
+      sinon.stub(call, 'lastCallNumber', { get: () => '123' });
+      sinon.stub(call, 'onToNumberChange');
+      sinon.stub(call, '_getValidatedNumbers').callsFake(async () => '123');
+      sinon.stub(call, '_makeCall');
+      await call.onCall();
+      sinon.assert.notCalled(call.onToNumberChange);
+      sinon.assert.notCalled(call._getValidatedNumbers);
+      sinon.assert.notCalled(call._makeCall);
     });
   });
   describe('_getValidatedNumbers', async () => {
@@ -448,6 +593,7 @@ describe('Call Unit Test', () => {
     async () => {
       call._callingSettings = {
         callingMode: callingModes.softphone,
+        fromNumber: '',
       };
       sinon.stub(call, 'toNumber', { get: () => '123' });
       const validatedResult = {
