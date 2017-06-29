@@ -65,27 +65,27 @@ export default class Call extends RcModule {
   _shouldInit() {
     return (
       this._numberValidate.ready &&
-        this._callingSettings.ready &&
-        this._storage.ready &&
-        this._regionSettings.ready &&
-        (!this._webphone || this._webphone.ready) &&
-        this._ringout.ready &&
-        this._softphone.ready &&
-        this.pending
+      this._callingSettings.ready &&
+      this._storage.ready &&
+      this._regionSettings.ready &&
+      (!this._webphone || this._webphone.ready) &&
+      this._ringout.ready &&
+      this._softphone.ready &&
+      this.pending
     );
   }
   _shouldReset() {
     return (
       (
-       !this._numberValidate.ready ||
-          !this._callingSettings.ready ||
-          !this._regionSettings.ready ||
-          (!!this._webphone && !this._webphone.ready) ||
-          !this._ringout.ready ||
-          !this._softphone.ready ||
-          !this._storage.ready
-        ) &&
-        this.ready
+        !this._numberValidate.ready ||
+        !this._callingSettings.ready ||
+        !this._regionSettings.ready ||
+        (!!this._webphone && !this._webphone.ready) ||
+        !this._ringout.ready ||
+        !this._softphone.ready ||
+        !this._storage.ready
+      ) &&
+      this.ready
     );
   }
   async _initModule() {
