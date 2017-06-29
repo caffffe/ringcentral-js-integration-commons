@@ -21,8 +21,8 @@ describe('Call Unit Test', () => {
       '_onStateChange',
       '_shouldInit',
       '_shouldReset',
-      '_initWebphone',
-      '_resetWebphone',
+      '_initModule',
+      '_resetModule',
       '_processCall',
       'onToNumberChange',
       'onCall',
@@ -33,52 +33,52 @@ describe('Call Unit Test', () => {
     });
   });
   describe('_onStateChange', () => {
-    it('_initWebphone should be called once when _shouldInit is true', () => {
+    it('_initModule should be called once when _shouldInit is true', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => true);
       sinon.stub(call, '_shouldReset').callsFake(() => false);
       sinon.stub(call, 'ready', { get: () => false });
-      sinon.stub(call, '_initWebphone');
-      sinon.stub(call, '_resetWebphone');
+      sinon.stub(call, '_initModule');
+      sinon.stub(call, '_resetModule');
       sinon.stub(call, '_processCall');
       call._onStateChange();
-      sinon.assert.calledOnce(call._initWebphone);
-      sinon.assert.notCalled(call._resetWebphone);
+      sinon.assert.calledOnce(call._initModule);
+      sinon.assert.notCalled(call._resetModule);
       sinon.assert.notCalled(call._processCall);
     });
-    it('_resetWebphone should be called once when _shouldReset is true', () => {
+    it('_resetModule should be called once when _shouldReset is true', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => false);
       sinon.stub(call, '_shouldReset').callsFake(() => true);
       sinon.stub(call, 'ready', { get: () => false });
-      sinon.stub(call, '_initWebphone');
-      sinon.stub(call, '_resetWebphone');
+      sinon.stub(call, '_initModule');
+      sinon.stub(call, '_resetModule');
       sinon.stub(call, '_processCall');
       call._onStateChange();
-      sinon.assert.notCalled(call._initWebphone);
-      sinon.assert.calledOnce(call._resetWebphone);
+      sinon.assert.notCalled(call._initModule);
+      sinon.assert.calledOnce(call._resetModule);
       sinon.assert.notCalled(call._processCall);
     });
     it('_processCall should be called once when ready is true', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => false);
       sinon.stub(call, '_shouldReset').callsFake(() => false);
       sinon.stub(call, 'ready', { get: () => true });
-      sinon.stub(call, '_initWebphone');
-      sinon.stub(call, '_resetWebphone');
+      sinon.stub(call, '_initModule');
+      sinon.stub(call, '_resetModule');
       sinon.stub(call, '_processCall');
       call._onStateChange();
-      sinon.assert.notCalled(call._initWebphone);
-      sinon.assert.notCalled(call._resetWebphone);
+      sinon.assert.notCalled(call._initModule);
+      sinon.assert.notCalled(call._resetModule);
       sinon.assert.calledOnce(call._processCall);
     });
-    it('_initWebphone,  _resetWebphone and _processCall should not be called', () => {
+    it('_initModule,  _resetModule and _processCall should not be called', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => false);
       sinon.stub(call, '_shouldReset').callsFake(() => false);
       sinon.stub(call, 'ready', { get: () => false });
-      sinon.stub(call, '_initWebphone');
-      sinon.stub(call, '_resetWebphone');
+      sinon.stub(call, '_initModule');
+      sinon.stub(call, '_resetModule');
       sinon.stub(call, '_processCall');
       call._onStateChange();
-      sinon.assert.notCalled(call._initWebphone);
-      sinon.assert.notCalled(call._resetWebphone);
+      sinon.assert.notCalled(call._initModule);
+      sinon.assert.notCalled(call._resetModule);
       sinon.assert.notCalled(call._processCall);
     });
   });
@@ -106,61 +106,61 @@ describe('Call Unit Test', () => {
         pending
        ) => {
         const result = (
-            numberValidateReady &&
-            callingSettingsReady &&
-            storageReady &&
-            regionSettingsReady &&
-            (!hasWebphone || webphoneReady) &&
-            ringoutReady &&
-            softphoneReady &&
-            pending
+          numberValidateReady &&
+          callingSettingsReady &&
+          storageReady &&
+          regionSettingsReady &&
+          (!hasWebphone || webphoneReady) &&
+          ringoutReady &&
+          softphoneReady &&
+          pending
         );
         it(
-            `should return ${result} when:
-            numberValidate.ready is ${numberValidateReady} and
-            callingSettings.ready is ${callingSettingsReady} and
-            storage.ready is ${storageReady} and
-            regionSettings.ready is ${regionSettingsReady}
-            webphone is ${hasWebphone ? '' : 'not'} used and
-            ${
-                hasWebphone ?
-                `webphone.ready is ${webphoneReady} and \n     ` :
-                ''
+          `should return ${result} when:
+          numberValidate.ready is ${numberValidateReady} and
+          callingSettings.ready is ${callingSettingsReady} and
+          storage.ready is ${storageReady} and
+          regionSettings.ready is ${regionSettingsReady}
+          webphone is ${hasWebphone ? '' : 'not'} used and
+          ${
+            hasWebphone ?
+            `webphone.ready is ${webphoneReady} and \n     ` :
+            ''
+          }
+          ringout.ready is ${ringoutReady} and
+          softphone.ready is ${softphoneReady} and
+          call.pending is ${pending}
+          `,
+          () => {
+            call._numberValidate = {
+              ready: numberValidateReady
+            };
+            call._callingSettings = {
+              ready: callingSettingsReady
+            };
+            call._storage = {
+              ready: storageReady
+            };
+            call._regionSettings = {
+              ready: regionSettingsReady
+            };
+            if (hasWebphone) {
+              call._webphone = {
+                ready: webphoneReady
+              };
             }
-            ringout.ready is ${ringoutReady} and
-            softphone.ready is ${softphoneReady} and
-            call.pending is ${pending}
-            `,
-            () => {
-              call._numberValidate = {
-                ready: numberValidateReady
-              };
-              call._callingSettings = {
-                ready: callingSettingsReady
-              };
-              call._storage = {
-                ready: storageReady
-              };
-              call._regionSettings = {
-                ready: regionSettingsReady
-              };
-              if (hasWebphone) {
-                call._webphone = {
-                  ready: webphoneReady
-                };
-              }
-              call._ringout = {
-                ready: ringoutReady
-              };
-              call._softphone = {
-                ready: softphoneReady
-              };
-              sinon.stub(call, 'pending', { get: () => pending });
-              expect(call._shouldInit()).to.equal(result);
-            }
+            call._ringout = {
+              ready: ringoutReady
+            };
+            call._softphone = {
+              ready: softphoneReady
+            };
+            sinon.stub(call, 'pending', { get: () => pending });
+            expect(call._shouldInit()).to.equal(result);
+          }
         );
       },
-          9
+      9
       );
   });
   describe('_shouldReset', () => {
@@ -177,64 +177,64 @@ describe('Call Unit Test', () => {
         ready
        ) => {
         const result = (
-            (!numberValidateReady ||
-            !callingSettingsReady ||
-            !storageReady ||
-            !regionSettingsReady ||
-            (!!hasWebphone && !webphoneReady) ||
-            !ringoutReady ||
-            !softphoneReady) &&
-            ready
+          (!numberValidateReady ||
+          !callingSettingsReady ||
+          !storageReady ||
+          !regionSettingsReady ||
+          (!!hasWebphone && !webphoneReady) ||
+          !ringoutReady ||
+          !softphoneReady) &&
+          ready
         );
         it(
-            `should return ${result} when:
-            numberValidate.ready is ${numberValidateReady} and
-            callingSettings.ready is ${callingSettingsReady} and
-            storage.ready is ${storageReady} and
-            regionSettings.ready is ${regionSettingsReady}
-            webphone is ${hasWebphone ? '' : 'not'} used and
-            ${
-                hasWebphone ?
-                `webphone.ready is ${webphoneReady} and \n     ` :
-                ''
+          `should return ${result} when:
+          numberValidate.ready is ${numberValidateReady} and
+          callingSettings.ready is ${callingSettingsReady} and
+          storage.ready is ${storageReady} and
+          regionSettings.ready is ${regionSettingsReady}
+          webphone is ${hasWebphone ? '' : 'not'} used and
+          ${
+            hasWebphone ?
+            `webphone.ready is ${webphoneReady} and \n     ` :
+            ''
+          }
+          ringout.ready is ${ringoutReady} and
+          softphone.ready is ${softphoneReady} and
+          call.ready is ${ready}
+          `,
+          () => {
+            call._numberValidate = {
+              ready: numberValidateReady
+            };
+            call._callingSettings = {
+              ready: callingSettingsReady
+            };
+            call._storage = {
+              ready: storageReady
+            };
+            call._regionSettings = {
+              ready: regionSettingsReady
+            };
+            if (hasWebphone) {
+              call._webphone = {
+                ready: webphoneReady
+              };
             }
-            ringout.ready is ${ringoutReady} and
-            softphone.ready is ${softphoneReady} and
-            call.ready is ${ready}
-            `,
-            () => {
-              call._numberValidate = {
-                ready: numberValidateReady
-              };
-              call._callingSettings = {
-                ready: callingSettingsReady
-              };
-              call._storage = {
-                ready: storageReady
-              };
-              call._regionSettings = {
-                ready: regionSettingsReady
-              };
-              if (hasWebphone) {
-                call._webphone = {
-                  ready: webphoneReady
-                };
-              }
-              call._ringout = {
-                ready: ringoutReady
-              };
-              call._softphone = {
-                ready: softphoneReady
-              };
-              sinon.stub(call, 'ready', { get: () => ready });
-              expect(call._shouldReset()).to.equal(result);
-            }
+            call._ringout = {
+              ready: ringoutReady
+            };
+            call._softphone = {
+              ready: softphoneReady
+            };
+            sinon.stub(call, 'ready', { get: () => ready });
+            expect(call._shouldReset()).to.equal(result);
+          }
         );
       },
-          9
+      9
       );
   });
-  describe('_initWebphone', async () => {
+  describe('_initModule', async () => {
     it(`_connect should be called once 
      when call._callingSettingMode is equal to call._callingModeswebphone`, async () => {
       call._callingSettingMode = callingModes.webphone;
@@ -245,7 +245,7 @@ describe('Call Unit Test', () => {
         connect: await sinon.stub().callsFake(() => {})
       };
       sinon.stub(call, '_webphone');
-      call._initWebphone();
+      call._initModule();
       sinon.assert.calledOnce(call._webphone.connect);
     });
     it(`_connect should not be called 
@@ -258,11 +258,11 @@ describe('Call Unit Test', () => {
         connect: await sinon.stub().callsFake(() => {})
       };
       sinon.stub(call, '_webphone');
-      call._initWebphone();
+      call._initModule();
       sinon.assert.notCalled(call._webphone.connect);
     });
   });
-  describe('_resetWebphone', () => {
+  describe('_resetModule', () => {
     it(`webphone.disconnect should be called once 
      when _callingSettingMode is equal to call._callingModeswebphone
      and call._webphone is not undefined`, () => {
@@ -270,12 +270,11 @@ describe('Call Unit Test', () => {
       call._callingSettings = {
         callingMode: callingModes.webphone
       };
-      // call._callingModesWebphone = 'foo';
       call._webphone = {
         disconnect: sinon.stub().callsFake(() => {})
       };
       sinon.stub(call, '_webphone');
-      call._resetWebphone();
+      call._resetModule();
       sinon.assert.calledOnce(call._webphone.disconnect);
     });
     it(`webphone.disconnect should not be called 
@@ -290,7 +289,7 @@ describe('Call Unit Test', () => {
         disconnect: sinon.stub().callsFake(() => {})
       };
       sinon.stub(call, '_webphone');
-      call._resetWebphone();
+      call._resetModule();
       sinon.assert.notCalled(call._webphone.disconnect);
     });
   });
