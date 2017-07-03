@@ -152,7 +152,13 @@ export default class CallingSettings extends RcModule {
   }
   async _onStateChange() {
     if (this._shouldInit()) {
+      this.store.dispatch({
+        type: this.actionTypes.init,
+      });
       await this._initModule();
+      this.store.dispatch({
+        type: this.actionTypes.initSuccess,
+      });
     } else if (this._shouldReset()) {
       this._resetModule();
     } else if (this._shouldValidate()) {
@@ -199,9 +205,6 @@ export default class CallingSettings extends RcModule {
     this._otherPhoneNumbers = this.otherPhoneNumbers;
     this._ringoutEnabled = this._rolesAndPermissions.ringoutEnabled;
     this._webphoneEnabled = this._rolesAndPermissions.webphoneEnabled;
-    this.store.dispatch({
-      type: this.actionTypes.init,
-    });
     if (!this.timestamp) {
       // first time login
       const defaultCallWith = this.callWithOptions && this.callWithOptions[0];
@@ -221,9 +224,6 @@ export default class CallingSettings extends RcModule {
     }
     await this._validateSettings();
     await this._initFromNumber();
-    this.store.dispatch({
-      type: this.actionTypes.initSuccess,
-    });
   }
 
   _resetModule() {
