@@ -155,12 +155,12 @@ export default class CallingSettings extends RcModule {
       this.store.dispatch({
         type: this.actionTypes.init,
       });
-      await this._initCallingSettingsModule();
+      await this._init();
       this.store.dispatch({
         type: this.actionTypes.initSuccess,
       });
     } else if (this._shouldReset()) {
-      this._resetModuleStatus();
+      this._reset();
     } else if (this._shouldValidate()) {
       this._ringoutEnabled = this._rolesAndPermissions.ringoutEnabled;
       this._webphoneEnabled = this._rolesAndPermissions.webphoneEnabled;
@@ -202,7 +202,7 @@ export default class CallingSettings extends RcModule {
       )
     );
   }
-  async _initCallingSettingsModule() {
+  async _init() {
     this._myPhoneNumbers = this.myPhoneNumbers;
     this._otherPhoneNumbers = this.otherPhoneNumbers;
     this._ringoutEnabled = this._rolesAndPermissions.ringoutEnabled;
@@ -228,7 +228,7 @@ export default class CallingSettings extends RcModule {
     await this._initFromNumber();
   }
 
-  _resetModuleStatus() {
+  _reset() {
     this.store.dispatch({
       type: this.actionTypes.resetSuccess,
     });

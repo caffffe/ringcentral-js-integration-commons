@@ -87,13 +87,7 @@ export default class DataFetcher extends Pollable {
   }
   async _onStateChange() {
     if (this._shouldInit()) {
-      this.store.dispatch({
-        type: this.actionTypes.init,
-      });
-      await this._initModuleStatus();
-      this.store.dispatch({
-        type: this.actionTypes.initSuccess,
-      });
+      await this._init();
     } else if (this._shouldReset()) {
       this._clearTimeout();
       this._promise = null;
@@ -144,7 +138,10 @@ export default class DataFetcher extends Pollable {
         )
     );
   }
-  async _initModuleStatus() {
+  async _init() {
+    this.store.dispatch({
+      type: this.actionTypes.init,
+    });
     if (this._shouldFetch()) {
       try {
         await this.fetchData();
