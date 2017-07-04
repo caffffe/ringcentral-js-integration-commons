@@ -49,7 +49,7 @@ describe('Call Unit Test', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => false);
       sinon.stub(call, '_shouldReset').callsFake(() => true);
       sinon.stub(call, 'ready', { get: () => false });
-      sinon.stub(call, '_initCallModule')
+      sinon.stub(call, '_initCallModule');
       sinon.stub(call, '_resetCallModule');
       sinon.stub(call, '_processCall');
       await call._onStateChange();
