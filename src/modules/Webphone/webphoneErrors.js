@@ -8,4 +8,5 @@ export default new Enum([
   'notWebphonePermission',
   'getSipProvisionError',
   'toVoiceMailError',
+  'checkDLError',
 ], 'webphone');
