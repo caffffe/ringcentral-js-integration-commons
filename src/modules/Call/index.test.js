@@ -21,8 +21,8 @@ describe('Call Unit Test', () => {
       '_onStateChange',
       '_shouldInit',
       '_shouldReset',
-      '_initModule',
-      '_resetModule',
+      '_initCallModule',
+      '_resetModuleStatus',
       '_processCall',
       'onToNumberChange',
       'onCall',
@@ -33,52 +33,52 @@ describe('Call Unit Test', () => {
     });
   });
   describe('_onStateChange', () => {
-    it('_initModule should be called once when _shouldInit is true', () => {
+    it('_initCallModule should be called once when _shouldInit is true', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => true);
       sinon.stub(call, '_shouldReset').callsFake(() => false);
       sinon.stub(call, 'ready', { get: () => false });
-      sinon.stub(call, '_initModule');
-      sinon.stub(call, '_resetModule');
+      sinon.stub(call, '_initCallModule');
+      sinon.stub(call, '_resetModuleStatus');
       sinon.stub(call, '_processCall');
       call._onStateChange();
-      sinon.assert.calledOnce(call._initModule);
-      sinon.assert.notCalled(call._resetModule);
+      sinon.assert.calledOnce(call._initCallModule);
+      sinon.assert.notCalled(call._resetModuleStatus);
       sinon.assert.notCalled(call._processCall);
     });
     it('_resetModule should be called once when _shouldReset is true', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => false);
       sinon.stub(call, '_shouldReset').callsFake(() => true);
       sinon.stub(call, 'ready', { get: () => false });
-      sinon.stub(call, '_initModule');
-      sinon.stub(call, '_resetModule');
+      sinon.stub(call, '_initCallModule');
+      sinon.stub(call, '_resetModuleStatus');
       sinon.stub(call, '_processCall');
       call._onStateChange();
-      sinon.assert.notCalled(call._initModule);
-      sinon.assert.calledOnce(call._resetModule);
+      sinon.assert.notCalled(call._initCallModule);
+      sinon.assert.calledOnce(call._resetModuleStatus);
       sinon.assert.notCalled(call._processCall);
     });
     it('_processCall should be called once when ready is true', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => false);
       sinon.stub(call, '_shouldReset').callsFake(() => false);
       sinon.stub(call, 'ready', { get: () => true });
-      sinon.stub(call, '_initModule');
-      sinon.stub(call, '_resetModule');
+      sinon.stub(call, '_initCallModule');
+      sinon.stub(call, '_resetModuleStatus');
       sinon.stub(call, '_processCall');
       call._onStateChange();
-      sinon.assert.notCalled(call._initModule);
-      sinon.assert.notCalled(call._resetModule);
+      sinon.assert.notCalled(call._initCallModule);
+      sinon.assert.notCalled(call._resetModuleStatus);
       sinon.assert.calledOnce(call._processCall);
     });
-    it('_initModule,  _resetModule and _processCall should not be called', () => {
+    it('_initCallModule,  _resetModuleStatus and _processCall should not be called', () => {
       sinon.stub(call, '_shouldInit').callsFake(() => false);
       sinon.stub(call, '_shouldReset').callsFake(() => false);
       sinon.stub(call, 'ready', { get: () => false });
-      sinon.stub(call, '_initModule');
-      sinon.stub(call, '_resetModule');
+      sinon.stub(call, '_initCallModule');
+      sinon.stub(call, '_resetModuleStatus');
       sinon.stub(call, '_processCall');
       call._onStateChange();
-      sinon.assert.notCalled(call._initModule);
-      sinon.assert.notCalled(call._resetModule);
+      sinon.assert.notCalled(call._initCallModule);
+      sinon.assert.notCalled(call._resetModuleStatus);
       sinon.assert.notCalled(call._processCall);
     });
   });
@@ -234,7 +234,7 @@ describe('Call Unit Test', () => {
       9
       );
   });
-  describe('_initModule', async () => {
+  describe('_initCallModule', async () => {
     it(`_connect should be called once 
      when call._callingSettingMode is equal to call._callingModeswebphone`, async () => {
       call._callingSettingMode = callingModes.webphone;
@@ -245,7 +245,7 @@ describe('Call Unit Test', () => {
         connect: await sinon.stub().callsFake(() => {})
       };
       sinon.stub(call, '_webphone');
-      call._initModule();
+      call._initCallModule();
       sinon.assert.calledOnce(call._webphone.connect);
     });
     it(`_connect should not be called 
@@ -258,11 +258,11 @@ describe('Call Unit Test', () => {
         connect: await sinon.stub().callsFake(() => {})
       };
       sinon.stub(call, '_webphone');
-      call._initModule();
+      call._initCallModule();
       sinon.assert.notCalled(call._webphone.connect);
     });
   });
-  describe('_resetModule', () => {
+  describe('_resetModuleStatus', () => {
     it(`webphone.disconnect should be called once 
      when _callingSettingMode is equal to call._callingModeswebphone
      and call._webphone is not undefined`, () => {
@@ -274,7 +274,7 @@ describe('Call Unit Test', () => {
         disconnect: sinon.stub().callsFake(() => {})
       };
       sinon.stub(call, '_webphone');
-      call._resetModule();
+      call._resetModuleStatus();
       sinon.assert.calledOnce(call._webphone.disconnect);
     });
     it(`webphone.disconnect should not be called 
@@ -289,7 +289,7 @@ describe('Call Unit Test', () => {
         disconnect: sinon.stub().callsFake(() => {})
       };
       sinon.stub(call, '_webphone');
-      call._resetModule();
+      call._resetModuleStatus();
       sinon.assert.notCalled(call._webphone.disconnect);
     });
   });

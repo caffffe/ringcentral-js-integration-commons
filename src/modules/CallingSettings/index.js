@@ -155,12 +155,12 @@ export default class CallingSettings extends RcModule {
       this.store.dispatch({
         type: this.actionTypes.init,
       });
-      await this._initModule();
+      await this._initCallingSettingsModule();
       this.store.dispatch({
         type: this.actionTypes.initSuccess,
       });
     } else if (this._shouldReset()) {
-      this._resetModule();
+      this._resetModuleStatus();
     } else if (this._shouldValidate()) {
       this._ringoutEnabled = this._rolesAndPermissions.ringoutEnabled;
       this._webphoneEnabled = this._rolesAndPermissions.webphoneEnabled;
@@ -181,26 +181,28 @@ export default class CallingSettings extends RcModule {
   }
   _shouldReset() {
     return (
-      this.ready && (
+      this.ready &&
+      (
         !this._storage.ready ||
         !this._extensionInfo.ready ||
         !this._extensionPhoneNumber.ready ||
         !this._forwardingNumber.ready ||
-        !this._rolesAndPermissions.ready)
+        !this._rolesAndPermissions.ready
+      )
     );
   }
   _shouldValidate() {
     return (
       this.ready &&
-        (
-          this._ringoutEnabled !== this._rolesAndPermissions.ringoutEnabled ||
-          this._webphoneEnabled !== this._rolesAndPermissions.webphoneEnabled ||
-          this._myPhoneNumbers !== this.myPhoneNumbers ||
-          this._otherPhoneNumbers !== this.otherPhoneNumbers
-        )
+      (
+        this._ringoutEnabled !== this._rolesAndPermissions.ringoutEnabled ||
+        this._webphoneEnabled !== this._rolesAndPermissions.webphoneEnabled ||
+        this._myPhoneNumbers !== this.myPhoneNumbers ||
+        this._otherPhoneNumbers !== this.otherPhoneNumbers
+      )
     );
   }
-  async _initModule() {
+  async _initCallingSettingsModule() {
     this._myPhoneNumbers = this.myPhoneNumbers;
     this._otherPhoneNumbers = this.otherPhoneNumbers;
     this._ringoutEnabled = this._rolesAndPermissions.ringoutEnabled;
@@ -226,7 +228,7 @@ export default class CallingSettings extends RcModule {
     await this._initFromNumber();
   }
 
-  _resetModule() {
+  _resetModuleStatus() {
     this.store.dispatch({
       type: this.actionTypes.resetSuccess,
     });

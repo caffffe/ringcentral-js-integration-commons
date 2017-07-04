@@ -55,9 +55,9 @@ export default class Call extends RcModule {
   async _onStateChange() {
     if (this._shouldInit()) {
       // init webphone
-      this._initModule();
+      this._initCallModule();
     } else if (this._shouldReset()) {
-      this._resetModule();
+      this._resetModuleStatus();
     } else if (this.ready) {
       this._processCall();
     }
@@ -88,7 +88,7 @@ export default class Call extends RcModule {
       this.ready
     );
   }
-  async _initModule() {
+  async _initCallModule() {
     this.store.dispatch({
       type: this.actionTypes.init,
     });
@@ -100,7 +100,7 @@ export default class Call extends RcModule {
       type: this.actionTypes.initSuccess,
     });
   }
-  async _resetModule() {
+  async _resetModuleStatus() {
     this.store.dispatch({
       type: this.actionTypes.resetSuccess,
     });

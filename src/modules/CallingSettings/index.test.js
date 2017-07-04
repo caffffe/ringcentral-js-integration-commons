@@ -20,8 +20,8 @@ describe('CallingSettings Unit Test', () => {
       '_shouldInit',
       '_shouldReset',
       '_shouldValidate',
-      '_initModule',
-      '_resetModule',
+      '_initCallingSettingsModule',
+      '_resetModuleStatus',
       '_initFromNumber',
       'updateFromNumber',
       '_setSoftPhoneToCallWith',
@@ -36,12 +36,12 @@ describe('CallingSettings Unit Test', () => {
     });
   });
   describe('_onStateChange', async () => {
-    it('_initModule should be called once when _shouldInit is true', async () => {
+    it('_initCallingSettingsModule should be called once when _shouldInit is true', async () => {
       sinon.stub(callingSettings, '_shouldInit').callsFake(() => true);
       sinon.stub(callingSettings, '_shouldReset').callsFake(() => false);
       sinon.stub(callingSettings, '_shouldValidate').callsFake(() => false);
-      sinon.stub(callingSettings, '_initModule');
-      sinon.stub(callingSettings, '_resetModule');
+      sinon.stub(callingSettings, '_initCallingSettingsModule');
+      sinon.stub(callingSettings, '_resetModuleStatus');
       sinon.stub(callingSettings, '_validateSettings');
       callingSettings._rolesAndPermissions = {
         ringoutEnabled: true,
@@ -51,16 +51,16 @@ describe('CallingSettings Unit Test', () => {
       sinon.stub(callingSettings, 'myPhoneNumbers', { get: () => '456' });
       sinon.stub(callingSettings, 'otherPhoneNumbers', { get: () => '456' });
       await callingSettings._onStateChange();
-      sinon.assert.calledOnce(callingSettings._initModule);
-      sinon.assert.notCalled(callingSettings._resetModule);
+      sinon.assert.calledOnce(callingSettings._initCallingSettingsModule);
+      sinon.assert.notCalled(callingSettings._resetModuleStatus);
       sinon.assert.notCalled(callingSettings._validateSettings);
     });
-    it('_resetModule should be called once when _shouldReset is true', async () => {
+    it('_resetModuleStatus should be called once when _shouldReset is true', async () => {
       sinon.stub(callingSettings, '_shouldInit').callsFake(() => false);
       sinon.stub(callingSettings, '_shouldReset').callsFake(() => true);
       sinon.stub(callingSettings, '_shouldValidate').callsFake(() => false);
-      sinon.stub(callingSettings, '_initModule');
-      sinon.stub(callingSettings, '_resetModule');
+      sinon.stub(callingSettings, '_initCallingSettingsModule');
+      sinon.stub(callingSettings, '_resetModuleStatus');
       sinon.stub(callingSettings, '_validateSettings');
       callingSettings._rolesAndPermissions = {
         ringoutEnabled: true,
@@ -70,16 +70,16 @@ describe('CallingSettings Unit Test', () => {
       sinon.stub(callingSettings, 'myPhoneNumbers', { get: () => '456' });
       sinon.stub(callingSettings, 'otherPhoneNumbers', { get: () => '456' });
       await callingSettings._onStateChange();
-      sinon.assert.notCalled(callingSettings._initModule);
-      sinon.assert.calledOnce(callingSettings._resetModule);
+      sinon.assert.notCalled(callingSettings._initCallingSettingsModule);
+      sinon.assert.calledOnce(callingSettings._resetModuleStatus);
       sinon.assert.notCalled(callingSettings._validateSettings);
     });
     it('_validateSettings should be called once when _shouldValidate is true', async () => {
       sinon.stub(callingSettings, '_shouldInit').callsFake(() => false);
       sinon.stub(callingSettings, '_shouldReset').callsFake(() => false);
       sinon.stub(callingSettings, '_shouldValidate').callsFake(() => true);
-      sinon.stub(callingSettings, '_initModule');
-      sinon.stub(callingSettings, '_resetModule');
+      sinon.stub(callingSettings, '_initCallingSettingsModule');
+      sinon.stub(callingSettings, '_resetModuleStatus');
       sinon.stub(callingSettings, '_validateSettings');
       callingSettings._rolesAndPermissions = {
         ringoutEnabled: true,
@@ -89,16 +89,16 @@ describe('CallingSettings Unit Test', () => {
       sinon.stub(callingSettings, 'myPhoneNumbers', { get: () => '456' });
       sinon.stub(callingSettings, 'otherPhoneNumbers', { get: () => '456' });
       await callingSettings._onStateChange();
-      sinon.assert.notCalled(callingSettings._initModule);
-      sinon.assert.notCalled(callingSettings._resetModule);
+      sinon.assert.notCalled(callingSettings._initCallingSettingsModule);
+      sinon.assert.notCalled(callingSettings._resetModuleStatus);
       sinon.assert.calledOnce(callingSettings._validateSettings);
     });
-    it('_initModule and _resetModule and _validateSettings should not be called', async () => {
+    it('_initCallingSettingsModule and _resetModuleStatus and _validateSettings should not be called', async () => {
       sinon.stub(callingSettings, '_shouldInit').callsFake(() => false);
       sinon.stub(callingSettings, '_shouldReset').callsFake(() => false);
       sinon.stub(callingSettings, '_shouldValidate').callsFake(() => false);
-      sinon.stub(callingSettings, '_initModule');
-      sinon.stub(callingSettings, '_resetModule');
+      sinon.stub(callingSettings, '_initCallingSettingsModule');
+      sinon.stub(callingSettings, '_resetModuleStatus');
       sinon.stub(callingSettings, '_validateSettings');
       callingSettings._rolesAndPermissions = {
         ringoutEnabled: true,
@@ -108,8 +108,8 @@ describe('CallingSettings Unit Test', () => {
       sinon.stub(callingSettings, 'myPhoneNumbers', { get: () => '456' });
       sinon.stub(callingSettings, 'otherPhoneNumbers', { get: () => '456' });
       await callingSettings._onStateChange();
-      sinon.assert.notCalled(callingSettings._initModule);
-      sinon.assert.notCalled(callingSettings._resetModule);
+      sinon.assert.notCalled(callingSettings._initCallingSettingsModule);
+      sinon.assert.notCalled(callingSettings._resetModuleStatus);
       sinon.assert.notCalled(callingSettings._validateSettings);
     });
   });
@@ -184,12 +184,14 @@ describe('CallingSettings Unit Test', () => {
         rolesAndPermissionsReady,
       ) => {
         const result = (
-          ready && (
+          ready &&
+          (
             !storageReady ||
             !extensionInfoReady ||
             !extensionPhoneNumberReady ||
             !forwardingNumberReady ||
-            !rolesAndPermissionsReady)
+            !rolesAndPermissionsReady
+          )
         );
         it(
           `should return ${result} when:
@@ -234,12 +236,13 @@ describe('CallingSettings Unit Test', () => {
         otherPhoneNumbersChanged,
       ) => {
         const result = (
-          ready && (
+          ready &&
+          (
             ringoutEnabledChanged ||
             webphoneEnabledChanged ||
             myPhoneNumbersChanged ||
             otherPhoneNumbersChanged
-            )
+          )
         );
         it(
           `should return ${result} when:
@@ -287,7 +290,7 @@ describe('CallingSettings Unit Test', () => {
       5
     );
   });
-  describe('_initModule', async () => {
+  describe('_initCallingSettingsModule', async () => {
     it(`should alert warning callingSettingsMessages.firstLogin when
     timestamp is equal to 0 and brand.id is 1210`, async () => {
       sinon.stub(callingSettings, 'myPhoneNumbers', { get: () => ['123'] });
@@ -308,7 +311,7 @@ describe('CallingSettings Unit Test', () => {
       sinon.stub(callingSettings, '_alert');
       sinon.stub(callingSettings, '_validateSettings');
       sinon.stub(callingSettings, '_initFromNumber');
-      await callingSettings._initModule();
+      await callingSettings._initCallingSettingsModule();
       sinon.assert.calledWith(callingSettings._alert.warning,
         { message: callingSettingsMessages.firstLogin });
     });
@@ -332,7 +335,7 @@ describe('CallingSettings Unit Test', () => {
       sinon.stub(callingSettings, '_alert');
       sinon.stub(callingSettings, '_validateSettings');
       sinon.stub(callingSettings, '_initFromNumber');
-      await callingSettings._initModule();
+      await callingSettings._initCallingSettingsModule();
       sinon.assert.calledWith(callingSettings._alert.warning,
         { message: callingSettingsMessages.firstLoginOther });
     });
@@ -356,7 +359,7 @@ describe('CallingSettings Unit Test', () => {
       sinon.stub(callingSettings, '_alert');
       sinon.stub(callingSettings, '_validateSettings');
       sinon.stub(callingSettings, '_initFromNumber');
-      await callingSettings._initModule();
+      await callingSettings._initCallingSettingsModule();
       sinon.assert.notCalled(callingSettings._alert.warning);
     });
   });
