@@ -44,6 +44,9 @@ export default class Webphone extends RcModule {
     contactMatcher,
     extensionDevice,
     numberValidate,
+    onCallEnd,
+    onCallRing,
+    onCallStart,
     ...options,
   }) {
     super({
@@ -65,6 +68,9 @@ export default class Webphone extends RcModule {
     this._storageWebphoneCountsKey = 'webphoneCounts';
     this._userMediaStorageKey = 'userMadia';
     this._contactMatcher = contactMatcher;
+    this._onCallEnd = onCallEnd;
+    this._onCallRing = onCallRing;
+    this._onCallStart = onCallStart;
     this._webphone = null;
     this._remoteVideo = null;
     this._localVideo = null;
@@ -264,7 +270,6 @@ export default class Webphone extends RcModule {
       this.store.dispatch({
         type: this.actionTypes.registrationFailed,
         errorCode,
-        error,
       });
       if (needToReconnect) {
         this._connect(needToReconnect);
@@ -429,6 +434,9 @@ export default class Webphone extends RcModule {
       console.log('accepted');
       session.callStatus = sessionStatus.connected;
       this._updateCurrentSessionAndSessions(session);
+      if (typeof this._onCallStart === 'function') {
+        this._onCallStart(session, this.currentSession);
+      }
     });
     session.on('progress', () => {
       console.log('progress...');
@@ -439,22 +447,34 @@ export default class Webphone extends RcModule {
       console.log('rejected');
       session.callStatus = sessionStatus.finished;
       this._removeSession(session);
+      if (typeof this._onCallEnd === 'function') {
+        this._onCallEnd(session, this.currentSession);
+      }
     });
     session.on('failed', (response, cause) => {
       console.log('Event: Failed');
       console.log(cause);
       session.callStatus = sessionStatus.finished;
       this._removeSession(session);
+      if (typeof this._onCallEnd === 'function') {
+        this._onCallEnd(session, this.currentSession);
+      }
     });
     session.on('terminated', () => {
       console.log('Event: Terminated');
       session.callStatus = sessionStatus.finished;
       this._removeSession(session);
+      if (typeof this._onCallEnd === 'function') {
+        this._onCallEnd(session, this.currentSession);
+      }
     });
     session.on('cancel', () => {
       console.log('Event: Cancel');
       session.callStatus = sessionStatus.finished;
       this._removeSession(session);
+      if (typeof this._onCallEnd === 'function') {
+        this._onCallEnd(session, this.currentSession);
+      }
     });
     session.on('refer', () => {
       console.log('Event: Refer');
@@ -503,7 +523,13 @@ export default class Webphone extends RcModule {
     session.on('rejected', () => {
       console.log('Event: Rejected');
       this._removeSession(session);
+      if (typeof this._onCallEnd === 'function') {
+        this._onCallEnd(session, this.currentSession);
+      }
     });
+    if (typeof this._onCallRing === 'function') {
+      this._onCallRing(session, this.currentSession);
+    }
     this._onNewCall();
   }
 
@@ -524,8 +550,12 @@ export default class Webphone extends RcModule {
       this._onAccepted(session, 'inbound');
       await session.accept(this.acceptOptions);
       this._resetMinimized();
+      if (typeof this._onCallStart === 'function') {
+        this._onCallStart(session, this.currentSession);
+      }
     } catch (e) {
       console.log('Accept failed');
+      console.error(e);
       this._removeSession(session);
       this._removeActiveSession();
     }
@@ -558,9 +588,14 @@ export default class Webphone extends RcModule {
         });
         return false;
       }
-      await session.forward(forwardNumber, this.acceptOptions);
+      const validPhoneNumber =
+        validatedResult.numbers[0] && validatedResult.numbers[0].e164;
+      await session.forward(validPhoneNumber, this.acceptOptions);
       console.log('Forwarded');
       this._removeSession(session);
+      if (typeof this._onCallEnd === 'function') {
+        this._onCallEnd(session, this.currentSession);
+      }
       return true;
     } catch (e) {
       console.error(e);
@@ -787,6 +822,9 @@ export default class Webphone extends RcModule {
       } catch (e) {
         console.error(e);
         this._removeSession(session);
+        if (typeof this._onCallEnd === 'function') {
+          this._onCallEnd(session, this.currentSession);
+        }
       }
     });
   }
@@ -830,6 +868,9 @@ export default class Webphone extends RcModule {
     this._setActiveSession(session);
     this._resetMinimized();
     this._onNewCall();
+    if (typeof this._onCallStart === 'function') {
+      this._onCallStart(session, this.currentSession);
+    }
     return session;
   }
 
