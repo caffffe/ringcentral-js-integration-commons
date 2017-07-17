@@ -589,11 +589,20 @@ export default class Webphone extends RcModule {
   }
   @proxify
   async mute(sessionId) {
-    this._sessionHandleWithId(sessionId, (session) => {
-      session.isOnMute = true;
-      session.mute();
-      this._updateCurrentSessionAndSessions(session);
-    });
+    try {
+      this._sessionHandleWithId(sessionId, (session) => {
+        session.isOnMute = true;
+        session.mute();
+        this._updateCurrentSessionAndSessions(session);
+        return true;
+      });
+    } catch (e) {
+      console.error(e);
+      this._alert.warning({
+        message: webphoneErrors.muteError
+      });
+      return false;
+    }
   }
   @proxify
   async unmute(sessionId) {
