@@ -629,8 +629,8 @@ export default class Webphone extends RcModule {
         session.isOnMute = true;
         session.mute();
         this._updateCurrentSessionAndSessions(session);
-        return true;
       });
+      return true;
     } catch (e) {
       console.error(e);
       this._alert.warning({
