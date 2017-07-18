@@ -650,10 +650,19 @@ export default class Webphone extends RcModule {
 
   @proxify
   async hold(sessionId) {
-    this._sessionHandleWithId(sessionId, (session) => {
-      session.hold();
-      this._updateCurrentSessionAndSessions(session);
-    });
+    try {
+      this._sessionHandleWithId(sessionId, (session) => {
+        session.hold();
+        this._updateCurrentSessionAndSessions(session);
+      });
+      return true;
+    } catch (e) {
+      console.log(e);
+      this._alert.warning({
+        message: webphoneErrors.holdError
+      });
+      return false;
+    }
   }
 
   @proxify

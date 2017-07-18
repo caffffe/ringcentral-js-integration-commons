@@ -10,5 +10,6 @@ export default new Enum([
   'toVoiceMailError',
   'checkDLError',
   'forwardError',
-  'muteError'
+  'muteError',
+  'holdError',
 ], 'webphone');
