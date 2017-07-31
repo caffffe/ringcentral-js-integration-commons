@@ -788,6 +788,7 @@ export default class Webphone extends RcModule {
       });
       session.isOnFlip = false;
     }
+    this._updateCurrentSessionAndSessions(session);
   }
 
   @proxify
