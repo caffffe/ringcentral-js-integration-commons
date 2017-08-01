@@ -27,6 +27,7 @@ export function normalizeSession(session) {
     isOnRecord: !!session.isOnRecord,
     isOnFlip: !!session.isOnFlip,
     contactMatch: session.contactMatch,
+    minimized: !!session.minimized,
   };
 }
 

@@ -5,6 +5,7 @@ import actionTypes from './actionTypes';
 import messageStatus from './messageStatus';
 import getRecentMessagesReducer from './getRecentMessagesReducer';
 import getDateFrom from '../../lib/getDateFrom';
+import concurrentExecute from '../../lib/concurrentExecute';
 
 /**
  * Retrieve all recent messages related to a specified contact.
@@ -37,7 +38,7 @@ export default class RecentMessages extends RcModule {
     this.store.subscribe(() => this._onStateChange());
   }
 
-  async _onStateChange() {
+  _onStateChange() {
     if (
       this.pending &&
       this._messageStore.ready
@@ -165,7 +166,7 @@ export default class RecentMessages extends RcModule {
    * @param {Number} length
    */
   _getLocalRecentMessages(currentContact, messages, dateFrom, length) {
-    // Get all messages related to this contacts
+    // Get all messages related to this contact
     const phoneNumbers = currentContact.phoneNumbers;
     const recentMessages = [];
     let message;
@@ -184,24 +185,16 @@ export default class RecentMessages extends RcModule {
   }
 
   _filterPhoneNumber(message) {
-    return ({ phoneNumber, extensionNumber }) => (
-      (
-        phoneNumber && (
-        phoneNumber === message.from.phoneNumber ||
-        !!message.to.find(to => to.phoneNumber === phoneNumber)
-      )) ||
-      (
-        extensionNumber && (
-        extensionNumber === message.from.extensionNumber ||
-        !!message.to.find(to => to.extensionNumber === extensionNumber)
-      ))
+    return ({ phoneNumber }) => (
+      phoneNumber === message.from.phoneNumber ||
+      !!message.to.find(to => to.phoneNumber === phoneNumber) ||
+      phoneNumber === message.from.extensionNumber ||
+      !!message.to.find(to => to.extensionNumber === phoneNumber)
     );
   }
 
   /**
    * Fetch recent messages from server by given current contact.
-   * It will iterate through all phoneNumbers of this contact and
-   * get specific number of latest messsages.
    * @param {Object} currentContact
    * @param {String} dateFrom
    * @param {String} dateTo
@@ -225,7 +218,7 @@ export default class RecentMessages extends RcModule {
       // Cannot filter out by extensionNumber
       if (phoneNumber) {
         const promise = this._fetchMessageList(
-          Object.assign(params, {
+          Object.assign({}, params, {
             phoneNumber
           })
         );
@@ -236,14 +229,14 @@ export default class RecentMessages extends RcModule {
 
     // TODO: Because we need to navigate to the message page,
     // So we may need to push new messages to messageStore
-    return Promise.all(recentMessagesPromise)
+    return concurrentExecute(recentMessagesPromise, 5, 500)
       .then(this._flattenToMessageRecords)
       .then(this._markAsRemoteMessage)
       .then(messages => this._sortMessages(messages));
   }
 
   _fetchMessageList(params) {
-    return this._client.account().extension().messageStore().list(params);
+    return () => this._client.account().extension().messageStore().list(params);
   }
 
   _countUnreadMessages(messages) {
