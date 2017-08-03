@@ -840,7 +840,7 @@ export default class Webphone extends RcModule {
     }
     try {
       await session.flip(flipValue);
-      this._onCallEnd(session);
+      // this._onCallEnd(session);
       console.log('Flipped');
     } catch (e) {
       console.error(e);
