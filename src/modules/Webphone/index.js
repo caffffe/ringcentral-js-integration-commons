@@ -1031,7 +1031,7 @@ export default class Webphone extends RcModule {
       this._contactMatcher.triggerMatch();
     }
     if (typeof this._onCallRingFunc === 'function') {
-      this._onCallRingFunc(session, this.ringSession);
+      this._onCallRingFunc(session, this.activeSession);
     }
   }
 
