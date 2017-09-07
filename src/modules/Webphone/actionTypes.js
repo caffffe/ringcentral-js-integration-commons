@@ -5,6 +5,7 @@ export default new Enum([
   ...Object.keys(moduleActionTypes),
   'connect',
   'connectError',
+  'connected',
   'registered',
   'registrationFailed',
   'disconnect',

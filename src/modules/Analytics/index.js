@@ -4,7 +4,7 @@ import actionTypes from './actionTypes';
 import getAnalyticsReducer from './getAnalyticsReducer';
 
 import { Segment } from '../../lib/Analytics';
-
+import callingModes from '../callingSettings/callingModes';
 
 export default class Analytics extends RcModule {
   constructor({
@@ -97,6 +97,8 @@ export default class Analytics extends RcModule {
           '_editCallLog',
           '_editSMSLog',
           '_navigate',
+          '_inboundCall',
+          '_coldTransfer',
         ].forEach((key) => {
           this[key](action);
         });
@@ -129,12 +131,20 @@ export default class Analytics extends RcModule {
       this.track('Call Attempt', {
         callSettingMode: action.callSettingMode
       });
+      if (action.callSettingMode === callingModes.webphone) {
+        this.track('call attempt WebRTC');
+      }
     }
   }
 
   _callConnected(action) {
     if (this._call && this._call.actionTypes.connectSuccess === action.type) {
-      this.track('Outbound Call Connected');
+      this.track('Outbound Call Connected', {
+        callSettingMode: action.callSettingMode
+      });
+      if (action.callSettingMode === callingModes.webphone) {
+        this.track('Outbound WebRTC Call Connected');
+      }
     }
   }
 
@@ -215,6 +225,22 @@ export default class Analytics extends RcModule {
       }
     }
   }
+  _inboundCall(action) {
+    if (this._webphone && this._webphone.actionTypes.connected === action.type) {
+      this.track('Inbound WebRTC Call Connected');
+    }
+  }
+
+  _coldTransfer(action) {
+    if (this._webphone
+      && this._webphone.activeSession
+      && this._webphone.activeSession.isOnTransfer === true
+      && this._webphone.actionTypes.updateSessions === action.type
+    ) {
+      this.track('Cold Transfer Call');
+    }
+  }
+
 
   _getTrackTarget(path) {
     if (path) {
@@ -239,6 +265,9 @@ export default class Analytics extends RcModule {
       }, {
         eventPostfix: 'Settings',
         router: '/settings',
+      }, {
+        eventPostfix: 'Conference',
+        router: '/conference',
       }];
       return targets.find(target => firstRoute === target.router);
     }

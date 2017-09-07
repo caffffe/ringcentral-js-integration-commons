@@ -592,6 +592,9 @@ export default class Webphone extends RcModule {
       this._onAccepted(session, 'inbound');
       await session.accept(this.acceptOptions);
       this._onCallStart(session);
+      this.store.dispatch({
+        type: this.actionTypes.connected,
+      });
     } catch (e) {
       console.log('Accept failed');
       console.error(e);
