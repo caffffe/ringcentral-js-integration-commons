@@ -132,7 +132,7 @@ export default class Analytics extends RcModule {
         callSettingMode: action.callSettingMode
       });
       if (action.callSettingMode === callingModes.webphone) {
-        this.track('call attempt WebRTC');
+        this.track('Call Attempt WebRTC');
       }
     }
   }
@@ -225,8 +225,9 @@ export default class Analytics extends RcModule {
       }
     }
   }
+
   _inboundCall(action) {
-    if (this._webphone && this._webphone.actionTypes.connected === action.type) {
+    if (this._webphone && this._webphone.actionTypes.callAnswer === action.type) {
       this.track('Inbound WebRTC Call Connected');
     }
   }
@@ -268,6 +269,9 @@ export default class Analytics extends RcModule {
       }, {
         eventPostfix: 'Conference',
         router: '/conference',
+      }, {
+        eventPostfix: 'Meeting',
+        router: '/meeting',
       }];
       return targets.find(target => firstRoute === target.router);
     }

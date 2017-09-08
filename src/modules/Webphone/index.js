@@ -591,9 +591,9 @@ export default class Webphone extends RcModule {
       this._holdOtherSession(session.id);
       this._onAccepted(session, 'inbound');
       await session.accept(this.acceptOptions);
-      this._onCallStart(session);
-      this.store.dispatch({
-        type: this.actionTypes.connected,
+      // this._onCallStart(session);
+      this.store.dispatch({ // for track
+        type: this.actionTypes.callAnswer,
       });
     } catch (e) {
       console.log('Accept failed');
@@ -1008,7 +1008,7 @@ export default class Webphone extends RcModule {
     session.creationTime = Date.now();
     this._onAccepted(session);
     this._holdOtherSession(session.id);
-    this._onCallStart(session);
+    // this._onCallStart(session);
     return session;
   }
 
