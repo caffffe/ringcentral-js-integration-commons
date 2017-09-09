@@ -504,7 +504,9 @@ export default class Webphone extends RcModule {
     session.on('accepted', () => {
       console.log('accepted');
       session.callStatus = sessionStatus.connected;
-      this._onCallStart(session);
+      if (session.direction === callDirections.inbound) {
+        this._onCallStart(session);
+      }
     });
     session.on('progress', () => {
       console.log('progress...');
@@ -1008,7 +1010,7 @@ export default class Webphone extends RcModule {
     session.creationTime = Date.now();
     this._onAccepted(session);
     this._holdOtherSession(session.id);
-    // this._onCallStart(session);
+    this._onCallStart(session);
     return session;
   }
 
