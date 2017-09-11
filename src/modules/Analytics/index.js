@@ -128,22 +128,24 @@ export default class Analytics extends RcModule {
 
   _callAttempt(action) {
     if (this._call && this._call.actionTypes.connect === action.type) {
-      this.track('Call Attempt', {
-        callSettingMode: action.callSettingMode
-      });
       if (action.callSettingMode === callingModes.webphone) {
         this.track('Call Attempt WebRTC');
+      } else {
+        this.track('Call Attempt', {
+          callSettingMode: action.callSettingMode
+        });
       }
     }
   }
 
   _callConnected(action) {
     if (this._call && this._call.actionTypes.connectSuccess === action.type) {
-      this.track('Outbound Call Connected', {
-        callSettingMode: action.callSettingMode
-      });
       if (action.callSettingMode === callingModes.webphone) {
         this.track('Outbound WebRTC Call Connected');
+      } else {
+        this.track('Outbound Call Connected', {
+          callSettingMode: action.callSettingMode
+        });
       }
     }
   }
@@ -234,8 +236,7 @@ export default class Analytics extends RcModule {
 
   _coldTransfer(action) {
     if (this._webphone
-      && this._webphone.activeSession
-      && this._webphone.activeSession.isOnTransfer === true
+      && this._webphone.isOnTransfer === true
       && this._webphone.actionTypes.updateSessions === action.type
     ) {
       this.track('Cold Transfer Call');
