@@ -32,9 +32,10 @@ describe('RecentMessages :: getContactsReducer', () => {
         type: actionTypes.loadSuccess,
         contact: {
           id: '171'
-        }
+        },
+        sessionId: '191'
       })).to.deep.equal({
-        '171': {
+        '171-191': {
           id: '171'
         }
       });
@@ -42,12 +43,13 @@ describe('RecentMessages :: getContactsReducer', () => {
 
     it('contact should be removed when reset', () => {
       const state = {
-        '171': { id: '171' },
+        '171-191': { id: '171' },
         '181': { id: '181' },
       };
       expect(reducer(state, {
         type: actionTypes.loadReset,
-        contact: { id: '171' }
+        contact: { id: '171' },
+        sessionId: '191'
       })).to.deep.equal({
         '181': { id: '181' }
       });
@@ -92,19 +94,21 @@ describe('RecentMessages :: getMessagesReducer', () => {
         messages,
         contact: {
           id: '171'
-        }
+        },
+        sessionId: '191'
       })).to.deep.equal({
-        '171': messages
+        '171-191': messages
       });
     });
 
     it('messages should be removed when reset', () => {
       const state = {
-        '171': []
+        '171-191': []
       };
       expect(reducer(state, {
         type: actionTypes.loadReset,
-        contact: { id: '171' }
+        contact: { id: '171' },
+        sessionId: '191'
       })).to.deep.equal({});
     });
   });

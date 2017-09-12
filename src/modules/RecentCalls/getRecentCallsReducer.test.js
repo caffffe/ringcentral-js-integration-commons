@@ -31,20 +31,22 @@ describe('RecentCalls :: getCallsReducer', () => {
       expect(reducer(state, {
         type: actionTypes.loadSuccess,
         calls: [],
-        contact: { id: '171' }
+        contact: { id: '171' },
+        sessionId: '191',
       })).to.deep.equal({
         '181': [],
-        '171': []
+        '171-191': []
       });
     });
 
     it('call should be removed when reset', () => {
       const state = {
-        '171': []
+        '171-191': []
       };
       expect(reducer(state, {
         type: actionTypes.loadReset,
-        contact: { id: '171' }
+        contact: { id: '171' },
+        sessionId: '191'
       })).to.deep.equal({});
     });
 

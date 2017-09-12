@@ -56,12 +56,14 @@ export default class RecentCalls extends RcModule {
   }
 
   @proxify
-  async getCalls(currentContact) {
+  async getCalls(currentContact, sessionId = '') {
     // No need to calculate recent calls of the same contact repeatly
     if (!currentContact) {
       return;
     }
-    if (this.calls[currentContact.id]) {
+    const contactId = String(currentContact && currentContact.id);
+    // if (this.calls[currentContact.id]) {
+    if (this.calls[sessionId ? `${contactId}-${sessionId}` : contactId]) {
       return;
     }
     this.store.dispatch({
@@ -74,14 +76,16 @@ export default class RecentCalls extends RcModule {
     this.store.dispatch({
       type: this.actionTypes.loadSuccess,
       calls,
-      contact: currentContact
+      contact: currentContact,
+      sessionId
     });
   }
 
-  cleanUpCalls(contact) {
+  cleanUpCalls(contact, sessionId) {
     this.store.dispatch({
       type: this.actionTypes.loadReset,
-      contact
+      contact,
+      sessionId,
     });
   }
 
