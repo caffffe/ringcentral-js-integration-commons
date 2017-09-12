@@ -4,8 +4,12 @@ import actionTypes from './actionTypes';
 import getAnalyticsReducer from './getAnalyticsReducer';
 
 import { Segment } from '../../lib/Analytics';
-import callingModes from '../callingSettings/callingModes';
+import callingModes from '../CallingSettings/callingModes';
 
+/**
+ * @class
+ * @description Analytics module.
+ */
 export default class Analytics extends RcModule {
   constructor({
     auth,
