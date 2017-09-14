@@ -27,7 +27,20 @@ describe('RecentMessages :: getContactsReducer', () => {
         .to.equal(originalState);
     });
 
-    it('should return all contacts when new contact is passed in', () => {
+    it('should return all contacts when new contact is passed in ', () => {
+      expect(reducer({}, {
+        type: actionTypes.loadSuccess,
+        contact: {
+          id: '171'
+        },
+      })).to.deep.equal({
+        '171': {
+          id: '171'
+        }
+      });
+    });
+
+    it('should return all contacts when new contact is passed in and on a call', () => {
       expect(reducer({}, {
         type: actionTypes.loadSuccess,
         contact: {
@@ -41,7 +54,20 @@ describe('RecentMessages :: getContactsReducer', () => {
       });
     });
 
-    it('contact should be removed when reset', () => {
+    it('contact should be removed when reset and not on a call', () => {
+      const state = {
+        '171': { id: '171' },
+        '181': { id: '181' },
+      };
+      expect(reducer(state, {
+        type: actionTypes.loadReset,
+        contact: { id: '171' },
+      })).to.deep.equal({
+        '181': { id: '181' }
+      });
+    });
+
+    it('contact should be removed when reset and on a call', () => {
       const state = {
         '171-191': { id: '171' },
         '181': { id: '181' },
@@ -87,7 +113,20 @@ describe('RecentMessages :: getMessagesReducer', () => {
         .to.equal(originalState);
     });
 
-    it('should return all messages when new message passed in', () => {
+    it('should return all messages when new message passed in and user is not on a call', () => {
+      const messages = { id: 1 };
+      expect(reducer({}, {
+        type: actionTypes.loadSuccess,
+        messages,
+        contact: {
+          id: '171'
+        },
+      })).to.deep.equal({
+        '171': messages
+      });
+    });
+
+    it('should return all messages when new message passed in and user is on a call', () => {
       const messages = { id: 1 };
       expect(reducer({}, {
         type: actionTypes.loadSuccess,
@@ -99,6 +138,16 @@ describe('RecentMessages :: getMessagesReducer', () => {
       })).to.deep.equal({
         '171-191': messages
       });
+    });
+
+    it('messages should be removed when reset', () => {
+      const state = {
+        '171': []
+      };
+      expect(reducer(state, {
+        type: actionTypes.loadReset,
+        contact: { id: '171' },
+      })).to.deep.equal({});
     });
 
     it('messages should be removed when reset', () => {
