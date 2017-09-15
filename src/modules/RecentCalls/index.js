@@ -56,7 +56,7 @@ export default class RecentCalls extends RcModule {
   }
 
   @proxify
-  async getCalls(currentContact, sessionId = '') {
+  async getCalls({ currentContact, sessionId = null }) {
     // No need to calculate recent calls of the same contact repeatly
     if (!currentContact) {
       return;
@@ -81,7 +81,7 @@ export default class RecentCalls extends RcModule {
     });
   }
 
-  cleanUpCalls(contact, sessionId) {
+  cleanUpCalls({ contact, sessionId = null }) {
     this.store.dispatch({
       type: this.actionTypes.loadReset,
       contact,
