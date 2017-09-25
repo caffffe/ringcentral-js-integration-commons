@@ -55,7 +55,6 @@ export default function init() {
           script.type = 'text/javascript';
           script.async = true;
           script.src = `https://cdn.segment.com/analytics.js/v1/${key}/analytics.min.js`;
-          
           // Insert our script next to the first script element.
           const first = document.getElementsByTagName('meta')[0];
           first.parentNode.insertBefore(script, first);
