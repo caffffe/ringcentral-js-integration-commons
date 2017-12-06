@@ -152,7 +152,7 @@ export default class CallLog extends Pollable {
     this._promise = null;
     this._lastMessage = null;
   }
-  _subscriptionHandler = async (message) => {
+   = async (message) => {
     if (
       presenceRegExp.test(message.event) &&
       message.body &&

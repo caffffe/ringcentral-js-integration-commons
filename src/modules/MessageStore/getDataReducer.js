@@ -39,6 +39,18 @@ export function getMessageDataReducer(types) {
           conversationId,
           recipients,
         });
+      case types.removeMessage: {
+        return {
+          ...state,
+          messages: state.messages.filter(
+            message => message.id !== conversationId
+          ),
+          conversations: state.conversations.filter(
+            conversation => conversation.conversationId !== conversationId
+          )
+        };
+        // return state;
+      }
       case types.cleanUp:
       case types.resetSuccess:
         return initialConversationsDataState;

@@ -456,6 +456,16 @@ export default class MessageStore extends Pollable {
     return updateRequest;
   }
 
+  async _deleteMessageApi(messageId) {
+    await this._client.account()
+      .extension()
+      .messageStore(messageId)
+      .delete({
+        purge: true,
+        conversationId: messageId,
+      });
+  }
+
   async _batchUpdateMessagesApi(messageIds, body) {
     const ids = decodeURIComponent(messageIds.join(','));
     const platform = this._client.service.platform();
@@ -514,6 +524,19 @@ export default class MessageStore extends Pollable {
       console.error(error);
     }
     return null;
+  }
+
+  @proxify
+  async deleteMessage(conversationId) {
+    this.store.dispatch({
+      type: this.actionTypes.removeMessage,
+      conversationId,
+    });
+    try {
+      await this._deleteMessageApi(conversationId);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   searchMessagesText(searchText) {
