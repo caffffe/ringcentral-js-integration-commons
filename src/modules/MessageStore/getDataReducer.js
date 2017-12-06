@@ -42,9 +42,6 @@ export function getMessageDataReducer(types) {
       case types.removeMessage: {
         return {
           ...state,
-          messages: state.messages.filter(
-            message => message.id !== conversationId
-          ),
           conversations: state.conversations.filter(
             conversation => conversation.conversationId !== conversationId
           )
