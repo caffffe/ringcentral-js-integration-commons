@@ -16,6 +16,7 @@ export function getMessageDataReducer(types) {
     syncToken = null,
     syncConversationId = null,
     conversationId = null,
+    messageId = null,
     recipients = null,
   }) => {
     switch (type) {
@@ -40,13 +41,21 @@ export function getMessageDataReducer(types) {
           recipients,
         });
       case types.removeMessage: {
+        const newConversationMap = {};
+        Object.keys(state.conversationMap).forEach((key) => {
+          if (key !== conversationId) {
+            newConversationMap[key] = state.conversationMap[key];
+          }
+        });
         return {
-          ...state,
           conversations: state.conversations.filter(
             conversation => conversation.conversationId !== conversationId
-          )
+          ),
+          conversationMap: newConversationMap,
+          messages: state.messages.filter(
+            message => message.id !== messageId
+          ),
         };
-        // return state;
       }
       case types.cleanUp:
       case types.resetSuccess:
