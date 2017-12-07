@@ -461,7 +461,6 @@ export default class MessageStore extends Pollable {
       .extension()
       .messageStore(conversationId)
       .delete({
-        purge: true,
         conversationId,
       });
   }
