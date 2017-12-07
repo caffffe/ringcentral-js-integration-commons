@@ -10,6 +10,7 @@ import * as messageStoreHelper from './messageStoreHelper';
 import actionTypes from './actionTypes';
 import getMessageStoreReducer from './getMessageStoreReducer';
 import getDataReducer from './getDataReducer';
+import messageStoreErrors from './messageStoreErrors';
 import sleep from '../../lib/sleep';
 import proxify from '../../lib/proxy/proxify';
 
@@ -536,6 +537,9 @@ export default class MessageStore extends Pollable {
       });
     } catch (error) {
       console.error(error);
+      this._alert.info({
+        message: messageStoreErrors.deleteFailed,
+      });
     }
   }
 
