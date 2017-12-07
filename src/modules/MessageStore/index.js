@@ -457,13 +457,11 @@ export default class MessageStore extends Pollable {
     return updateRequest;
   }
 
-  async _deleteMessageApi(conversationId) {
+  async _deleteMessageApi(messageId) {
     await this._client.account()
       .extension()
-      .messageStore(conversationId)
-      .delete({
-        conversationId,
-      });
+      .messageStore(messageId)
+      .delete();
   }
 
   async _batchUpdateMessagesApi(messageIds, body) {
@@ -527,13 +525,13 @@ export default class MessageStore extends Pollable {
   }
 
   @proxify
-  async deleteMessage(conversationId) {
+  async deleteMessage(messageId) {
     try {
-      await this._deleteMessageApi(conversationId);
+      await this._deleteMessageApi(messageId);
       this.store.dispatch({
         type: this.actionTypes.removeMessage,
-        conversationId,
-        messageId: conversationId,
+        conversationId: messageId,
+        messageId,
       });
     } catch (error) {
       console.error(error);
