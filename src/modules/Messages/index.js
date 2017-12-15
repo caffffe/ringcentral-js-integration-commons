@@ -9,8 +9,8 @@ import {
   sortSearchResults,
   messageIsTextMessage,
   messageIsVoicemail,
+  getVoicemailAttachment,
 } from '../../lib/messageHelper';
-import cleanNumber from '../../lib/cleanNumber';
 import proxify from '../../lib/proxy/proxify';
 import messageTypes from '../../enums/messageTypes';
 
@@ -22,6 +22,7 @@ import messageTypes from '../../enums/messageTypes';
   deps: [
     'MessageStore',
     'ExtensionInfo',
+    'Auth',
     { dep: 'ContactMatcher', optional: true },
     { dep: 'ConversationLogger', optional: true },
     { dep: 'MessagesOptions', optional: true }
@@ -38,6 +39,7 @@ export default class Messages extends RcModule {
    * @param {Number} params.defaultPerPage - default numbers of perPage, default 20
    */
   constructor({
+    auth,
     messageStore,
     extensionInfo,
     defaultPerPage = 20,
@@ -51,6 +53,7 @@ export default class Messages extends RcModule {
     });
     this._contactMatcher = contactMatcher;
     this._conversationLogger = conversationLogger;
+    this._auth = this::ensureExist(auth, 'auth');
     this._messageStore = this::ensureExist(messageStore, 'messageStore');
     this._extensionInfo = this::ensureExist(extensionInfo, 'extensionInfo');
     this._reducer = getMessagesReducer(this.actionTypes, defaultPerPage);
@@ -99,12 +102,14 @@ export default class Messages extends RcModule {
       () => this._contactMatcher && this._contactMatcher.dataMapping,
       () => this._conversationLogger && this._conversationLogger.loggingMap,
       () => this._conversationLogger && this._conversationLogger.dataMapping,
+      () => this._auth.accessToken,
       (
         conversations,
         extensionNumber,
         contactMapping = {},
         loggingMap = {},
         conversationLogMapping = {},
+        accessToken,
       ) => (
         conversations.map((message) => {
           const {
@@ -124,6 +129,10 @@ export default class Messages extends RcModule {
             null;
           const isLogging = !!(conversationLogId && loggingMap[conversationLogId]);
           const conversationMatches = conversationLogMapping[conversationLogId] || [];
+          let voicemailAttachment = null;
+          if (messageIsVoicemail(message)) {
+            voicemailAttachment = getVoicemailAttachment(message, accessToken);
+          }
           return {
             ...message,
             self,
@@ -133,6 +142,7 @@ export default class Messages extends RcModule {
             conversationLogId,
             isLogging,
             conversationMatches,
+            voicemailAttachment,
             lastMatchedCorrespondentEntity: (
               this._conversationLogger &&
                 this._conversationLogger.getLastMatchedCorrespondentEntity(message)
@@ -170,19 +180,7 @@ export default class Messages extends RcModule {
         if (effectiveSearchString !== '') {
           const searchResults = [];
           allConversations.forEach((message) => {
-            const searchNumber = cleanNumber(effectiveSearchString, false);
             const searchRegExp = new RegExp(effectiveSearchString, 'i');
-            if (searchNumber !== '' && message.correspondents.find(contact => (
-              cleanNumber(contact.phoneNumber || contact.extensionNumber || '')
-                .indexOf(searchNumber) > -1
-            ))) {
-              // match by phoneNumber or extensionNumber
-              searchResults.push({
-                ...message,
-                matchOrder: 0,
-              });
-              return;
-            }
             if (message.correspondentMatches.length) {
               if (
                 message.correspondentMatches.find(entity => (
@@ -263,6 +261,7 @@ export default class Messages extends RcModule {
 
   _shouldInit() {
     return !!(
+      this._auth.loggedIn &&
       this._messageStore.ready &&
       this._extensionInfo.ready &&
       (!this._contactMatcher || this._contactMatcher.ready) &&
@@ -285,6 +284,7 @@ export default class Messages extends RcModule {
   _shouldReset() {
     return !!(
       (
+        !this._auth.loggedIn ||
         !this._messageStore.ready ||
         !this._extensionInfo.ready ||
         (this._contactMatcher && !this._contactMatcher.ready) ||
