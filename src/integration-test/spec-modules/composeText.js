@@ -23,19 +23,19 @@ export default (auth, client, account, alert, regionSettings, composeText, messa
     conditionalDescribe('Should Init Successfully with Default Setting', () => {
       this.timeout(20000);
       it('Should Set Sender Number with First SmsSender Phone Number by Default', () => {
-        expect(composeText.senderNumber).to.equals(messageSender.senderNumbersList[0]);
+        expect(composeText.senderNumber).to.equals(messageSender.senderNumbersList[0].phoneNumber);
       });
     });
 
     conditionalDescribe('Should Save Sender Number', () => {
       this.timeout(20000);
       it('Should Update Sender Number After User Change Sender Number', () => {
-        composeText.updateSenderNumber(messageSender.senderNumbersList[1]);
-        expect(composeText.senderNumber).to.equals(messageSender.senderNumbersList[1]);
+        composeText.updateSenderNumber(messageSender.senderNumbersList[1].phoneNumber);
+        expect(composeText.senderNumber).to.equals(messageSender.senderNumbersList[1].phoneNumber);
       });
 
       it('Should Remember Sender Number After Logout', async () => {
-        composeText.updateSenderNumber(messageSender.senderNumbersList[1]);
+        composeText.updateSenderNumber(messageSender.senderNumbersList[1].phoneNumber);
         auth.logout();
         await waitUntilEqual(() => auth.loginStatus, 'LoginStatus', loginStatus.notLoggedIn, 3);
         auth.login({
@@ -43,7 +43,7 @@ export default (auth, client, account, alert, regionSettings, composeText, messa
         });
         await waitUntilEqual(() => auth.loginStatus, 'LoginStatus', loginStatus.loggedIn, 3);
         waitInSeconds(2);
-        expect(composeText.senderNumber).to.equals(messageSender.senderNumbersList[1]);
+        expect(composeText.senderNumber).to.equals(messageSender.senderNumbersList[1].phoneNumber);
       });
     });
 
@@ -709,7 +709,7 @@ export default (auth, client, account, alert, regionSettings, composeText, messa
           expect(containsErrorMessage(alert.state.messages, messageSenderMessages.noToNumber))
             .to.equal(undefined);
         });
-        it('Should Alert of internationalSMSNotSupported - select international phone number', async () => {
+        it('Should Alert of recipientNumberInvalids - select international phone number', async () => {
           regionSettings.setData({countryCode: 'GB', areaCode: ''});
           composeText.addToNumber({ phoneNumber: '8558990011' });
           composeText.updateMessageText("test sender");
@@ -720,7 +720,7 @@ export default (auth, client, account, alert, regionSettings, composeText, messa
           }
           expect(containsErrorMessage(
             alert.state.messages,
-            messageSenderMessages.internationalSMSNotSupported
+            messageSenderMessages.recipientNumberInvalids
           )).to.not.equal(undefined);
           expect(containsErrorMessage(alert.state.messages, messageSenderMessages.noAreaCode))
             .to.equal(undefined);
@@ -731,6 +731,28 @@ export default (auth, client, account, alert, regionSettings, composeText, messa
           expect(containsErrorMessage(alert.state.messages, messageSenderMessages.noToNumber))
             .to.equal(undefined);
         });
+        // it('Should Alert of internationalSMSNotSupported - select international phone number', async () => {
+        //   regionSettings.setData({countryCode: 'GB', areaCode: ''});
+        //   composeText.addToNumber({ phoneNumber: '8558990011' });
+        //   composeText.updateMessageText("test sender");
+        //   try{
+        //     await composeText.send();
+        //   }catch (error) {
+        //     console.debug('message sender e:', error);
+        //   }
+        //   expect(containsErrorMessage(
+        //     alert.state.messages,
+        //     messageSenderMessages.recipientNumberInvalids
+        //   )).to.not.equal(undefined);
+        //   expect(containsErrorMessage(alert.state.messages, messageSenderMessages.noAreaCode))
+        //     .to.equal(undefined);
+        //   expect(containsErrorMessage(alert.state.messages, messageSenderMessages.specialNumber))
+        //     .to.equal(undefined);
+        //   expect(containsErrorMessage(alert.state.messages, messageSenderMessages.notAnExtension))
+        //     .to.equal(undefined);
+        //   expect(containsErrorMessage(alert.state.messages, messageSenderMessages.noToNumber))
+        //     .to.equal(undefined);
+        // });
       });
     });
   });

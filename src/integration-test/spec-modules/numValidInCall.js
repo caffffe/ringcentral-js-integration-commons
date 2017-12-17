@@ -1,11 +1,14 @@
 import { ensureLogin, containsErrorMessage } from '../utils/HelpUtil';
 import callErrors from '../../modules/Call/callErrors';
 import { waitUntilEqual } from '../utils/WaitUtil';
+import * as mock from '../mock';
 
 export default (Auth, Alert, Client, RegionSettings, Call, accountWithMultiDP) => {
   describe('Number Validation when Making Phone Call', async function () {
     this.timeout(10000);
     let conditionalDescribe = describe;
+    // mock.mockClient(Client);
+    // mock.mockForLogin();
     const isLoginSuccess = await ensureLogin(Auth, accountWithMultiDP);
     if (!isLoginSuccess) {
       conditionalDescribe = describe.skip;
