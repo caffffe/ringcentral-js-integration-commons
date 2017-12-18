@@ -23,7 +23,6 @@ export default (auth, client, regionSettings, account) => {
       await waitInSeconds(2);
       expect(regionSettings.availableCountries).to.have.length.above(0);
     });
-
     it('Record fetched from SDK should be the same as RawData', () => {
       expect(regionSettings.availableCountries.length).to.equal(clientHistoryRequest.getRawResponse(ClientHistoryRequest.endPoints.dialingPlan).records.length);
     });

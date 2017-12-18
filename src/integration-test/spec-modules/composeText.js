@@ -8,9 +8,7 @@ export default (auth, client, account, alert, regionSettings, composeText, messa
   describe('ComposeText', async function () {
     this.timeout(20000);
     let conditionalDescribe = describe;
-    const clientHistoryRequest = new ClientHistoryRequest(new Map(), client);
-
-    before(async () => {
+    before(async function () {
       const isLoginSuccess = await ensureLogin(auth, account);
       if (!isLoginSuccess) {
         conditionalDescribe = describe.skip;
@@ -20,8 +18,7 @@ export default (auth, client, account, alert, regionSettings, composeText, messa
       await waitUntilObjectSizeGreaterThan(() => composeText.senderNumber, 'Sender Number', 0, 3);
     });
 
-    conditionalDescribe('Should Init Successfully with Default Setting', () => {
-      this.timeout(20000);
+    conditionalDescribe('Should Init Successfully with Deafult Setting', () => {
       it('Should Set Sender Number with First SmsSender Phone Number by Default', () => {
         expect(composeText.senderNumber).to.equals(messageSender.senderNumbersList[0].phoneNumber);
       });
