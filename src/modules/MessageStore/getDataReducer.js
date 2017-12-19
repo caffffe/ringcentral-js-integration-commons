@@ -43,11 +43,6 @@ export function getMessageDataReducer(types) {
       case types.removeMessage: {
         const newConversationMap = {};
         const newConversations = [];
-        Object.keys(state.conversationMap).forEach((key) => {
-          if (key !== conversationId) {
-            newConversationMap[key] = state.conversationMap[key];
-          }
-        });
         state.conversations.forEach((conversation) => {
           if (conversation && conversation.conversationId !== conversationId) {
             newConversations.push({ ...conversation });
