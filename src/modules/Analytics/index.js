@@ -19,9 +19,19 @@ import callingModes from '../CallingSettings/callingModes';
     'Webphone',
     'Contacts',
     'MessageSender',
+    'MessageStore',
+    'ContactDetails',
+    'CallHistory',
+    'Conference',
+    'Meeting',
     { dep: 'RouterInteraction', optional: true },
     { dep: 'AnalyticsAdapter', optional: true },
-    { dep: 'AnalyticsOptions', optional: true }
+    { dep: 'AnalyticsOptions', optional: true },
+    { dep: 'DialerUI', optional: true },
+    { dep: 'ChromeAdapter', optional: true },
+    { dep: 'GoogleAuthorize', optional: true },
+    { dep: 'GoogleCalendar', optional: true },
+    { dep: 'GoogleEmails', optional: true },
   ]
 })
 export default class Analytics extends RcModule {
@@ -32,12 +42,21 @@ export default class Analytics extends RcModule {
     contacts,
     messageSender,
     adapter,
-    // router,
     routerInteraction,
+    dialerUI,
     analyticsKey,
     appName,
     appVersion,
     brandCode,
+    messageStore,
+    contactDetails,
+    callHistory,
+    conference,
+    meeting,
+    chromeAdapter,
+    googleAuthorize,
+    googleCalendar,
+    googleEmails,
     ...options
   }) {
     super({
@@ -51,10 +70,20 @@ export default class Analytics extends RcModule {
     this._messageSender = messageSender;
     this._adapter = adapter;
     this._router = routerInteraction;
+    this._dialerUI = dialerUI;
     this._analyticsKey = analyticsKey;
     this._appName = appName;
     this._appVersion = appVersion;
     this._brandCode = brandCode;
+    this._messageStore = messageStore;
+    this._contactDetails = contactDetails;
+    this._callHistory = callHistory;
+    this._conference = conference;
+    this._meeting = meeting;
+    this._chromeAdapter = chromeAdapter;
+    this._googleAuthorize = googleAuthorize;
+    this._googleCalendar = googleCalendar;
+    this._googleEmails = googleEmails;
     this._reducer = getAnalyticsReducer(this.actionTypes);
     this._segment = Segment();
   }
@@ -103,6 +132,7 @@ export default class Analytics extends RcModule {
   async _processActions() {
     if (this.lastActions.length) {
       await sleep(300);
+      // console.log(this.lastActions);
       this.lastActions.forEach((action) => {
         [
           '_authentication',
@@ -123,6 +153,23 @@ export default class Analytics extends RcModule {
           '_navigate',
           '_inboundCall',
           '_coldTransfer',
+          '_textClickToDial',
+          '_voicemailClickToDial',
+          '_voicemailClickToSMS',
+          '_voicemailDelete',
+          '_voicemailFlag',
+          '_contactDetailClickToDial',
+          '_contactDetailClickToSMS',
+          '_callHistoryClickToDial',
+          '_callHistoryClickToSMS',
+          '_openActivityCardGmail',
+          '_conferenceInviteWithCalendar',
+          '_conferenceInviteWithText',
+          '_conferenceAddDialInNumber',
+          '_conferenceJoinAsHost',
+          '_meetingInviteWithCalendar',
+          '_onGoogleAuthorize',
+          '_onGoogleUnauthorize'
         ].forEach((key) => {
           this[key](action);
         });
@@ -204,13 +251,17 @@ export default class Analytics extends RcModule {
   }
 
   _clickToDial(action) {
-    if (this._adapter && this._adapter.actionTypes.clickToDial === action.type) {
+    if ((this._adapter && this._adapter.actionTypes.clickToDial === action.type)
+      || (this._chromeAdapter && this._chromeAdapter.actionTypes.clickToDial === action.type)
+    ) {
       this.track('Click To Dial');
     }
   }
 
   _clickToSMS(action) {
-    if (this._adapter && this._adapter.actionTypes.clickToSMS === action.type) {
+    if ((this._adapter && this._adapter.actionTypes.clickToSMS === action.type)
+      || (this._chromeAdapter && this._chromeAdapter.actionTypes.clickToSMS === action.type)
+    ) {
       this.track('Click To SMS');
     }
   }
@@ -266,6 +317,121 @@ export default class Analytics extends RcModule {
     }
   }
 
+  _textClickToDial(action) {
+    if (this._dialerUI
+      && this._dialerUI.actionTypes.call === action.type
+      && this._dialerUI.dialerTypes.text === action.clickToDialType) {
+      this.track('Click To Dial (Text List)');
+    }
+  }
+
+  _voicemailClickToDial(action) {
+    if (this._dialerUI
+      && this._dialerUI.actionTypes.call === action.type
+      && this._dialerUI.dialerTypes.voicemail === action.clickToDialType) {
+      this.track('Click To Dial (Voicemail List)');
+    }
+  }
+
+  _voicemailClickToSMS(action) {
+    if (this._messageStore && this._messageStore.actionTypes.clickToSMS === action.type) {
+      this.track('Click to SMS (Voicemail List)');
+    }
+  }
+
+  _voicemailDelete(action) {
+    if (this._messageStore && this._messageStore.actionTypes.removeMessage === action.type) {
+      this.track('Delete Voicemail');
+    }
+  }
+
+  _voicemailFlag(action) {
+    if (this._messageStore
+      && this._messageStore.actionTypes.updateMessages === action.type
+      && action.mark) {
+      this.track('Flag Voicemail');
+    }
+  }
+
+  _contactDetailClickToDial(action) {
+    if (this._dialerUI
+      && this._dialerUI.actionTypes.call === action.type
+      && this._dialerUI.dialerTypes.contactDetail === action.clickToDialType) {
+      this.track('Click To Dial (Contact Details)');
+    }
+  }
+
+  _contactDetailClickToSMS(action) {
+    if (this._contactDetails
+     && this._contactDetails.actionTypes.clickToSMS === action.type) {
+      this.track('Click To SMS (Contact Details)');
+    }
+  }
+
+  _callHistoryClickToDial(action) {
+    if (this._dialerUI
+      && this._dialerUI.actionTypes.call === action.type
+      && this._dialerUI.dialerTypes.callHistory === action.clickToDialType) {
+      this.track('Click To dial (Call History)');
+    }
+  }
+
+  _callHistoryClickToSMS(action) {
+    if (this._callHistory
+     && this._callHistory.actionTypes.clickToSMS === action.type) {
+      this.track('Click To SMS (Call History)');
+    }
+  }
+  _openActivityCardGmail(action) {
+    if (this._googleEmails && this._googleEmails.actionTypes.initLoad === action.type) {
+      this.track('Gmail Activity Card');
+    }
+  }
+
+  _conferenceInviteWithCalendar(action) {
+    if (this._googleCalendar && this._googleCalendar.actionTypes.inviteConference === action.type) {
+      this.track('Invite With Calendar (Conference)');
+    }
+  }
+
+  _conferenceInviteWithText(action) {
+    if (this._conference
+      && this._conference.actionTypes.inviteWithText === action.type) {
+      this.track('Invite With Text (Conference)');
+    }
+  }
+
+  _conferenceAddDialInNumber(action) {
+    if (this._conference
+      && this._conference.actionTypes.updateAdditionalNumbers === action.type) {
+      this.track('Select Additional Dial-in Number (Conference)');
+    }
+  }
+
+  _conferenceJoinAsHost(action) {
+    if (this._conference
+      && this._conference.actionTypes.joinAsHost === action.type) {
+      this.track('Join As Host (Conference)');
+    }
+  }
+
+  _meetingInviteWithCalendar(action) {
+    if (this._googleCalendar && this._googleCalendar.actionTypes.inviteMeeting === action.type) {
+      this.track('Invite With Calendar (Meeting)');
+    }
+  }
+
+  _onGoogleAuthorize(action) {
+    if (this._googleAuthorize && this._googleAuthorize.actionTypes.authorized === action.type) {
+      this.track('Google Authorize');
+    }
+  }
+
+  _onGoogleUnauthorize(action) {
+    if (this._googleAuthorize && this._googleAuthorize.actionTypes.unauthorized === action.type) {
+      this.track('Google Unauthorize');
+    }
+  }
 
   _getTrackTarget(path) {
     if (path) {

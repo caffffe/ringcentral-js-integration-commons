@@ -503,7 +503,7 @@ export default class MessageStore extends Pollable {
   }
 
   @proxify
-  async readMessages(conversationId) {
+  async readMessages({ conversationId, mark = false }) {
     const conversation = this.conversationMap[conversationId];
     if (!conversation) {
       return null;
@@ -517,6 +517,7 @@ export default class MessageStore extends Pollable {
       this.store.dispatch({
         type: this.actionTypes.updateMessages,
         records: updatedMessages,
+        mark,
       });
     } catch (error) {
       console.error(error);
@@ -534,6 +535,7 @@ export default class MessageStore extends Pollable {
       this.store.dispatch({
         type: this.actionTypes.updateMessages,
         records: [message],
+        mark: true,
       });
     } catch (error) {
       console.error(error);
@@ -591,6 +593,13 @@ export default class MessageStore extends Pollable {
 
   pushMessage(record) {
     this.pushMessages([record]);
+  }
+
+  @proxify
+  onClickToSMS() {
+    this.store.dispatch({
+      type: this.actionTypes.clickToSMS
+    });
   }
 
   get cache() {

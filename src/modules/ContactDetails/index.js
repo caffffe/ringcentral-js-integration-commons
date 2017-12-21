@@ -91,6 +91,13 @@ export default class ContactDetails extends RcModule {
     return this._contacts.getPresence(contact, false);
   }
 
+  @proxify
+  onClickToSMS() {
+    this.store.dispatch({
+      type: this.actionTypes.clickToSMS,
+    });
+  }
+
   get contact() {
     return this._selectors.currentContact();
   }

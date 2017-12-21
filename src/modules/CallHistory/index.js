@@ -10,6 +10,7 @@ import getCallHistoryReducer from './getCallHistoryReducer';
 import ensureExist from '../../lib/ensureExist';
 import normalizeNumber from '../../lib/normalizeNumber';
 import getter from '../../lib/getter';
+import proxify from '../../lib/proxy/proxify';
 
 /**
  * @class
@@ -228,6 +229,13 @@ export default class CallHistory extends RcModule {
     this.store.dispatch({
       type: this.actionTypes.removeEndedCalls,
       endedCalls,
+    });
+  }
+
+  @proxify
+  onClickToSMS() {
+    this.store.dispatch({
+      type: this.actionTypes.clickToSMS
     });
   }
 
