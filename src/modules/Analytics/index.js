@@ -23,7 +23,6 @@ import callingModes from '../CallingSettings/callingModes';
     'ContactDetails',
     'CallHistory',
     'Conference',
-    'Meeting',
     { dep: 'RouterInteraction', optional: true },
     { dep: 'AnalyticsAdapter', optional: true },
     { dep: 'AnalyticsOptions', optional: true },
@@ -48,7 +47,6 @@ export default class Analytics extends RcModule {
     contactDetails,
     callHistory,
     conference,
-    meeting,
     ...options
   }) {
     super({
@@ -71,7 +69,6 @@ export default class Analytics extends RcModule {
     this._contactDetails = contactDetails;
     this._callHistory = callHistory;
     this._conference = conference;
-    this._meeting = meeting;
     this._reducer = getAnalyticsReducer(this.actionTypes);
     this._segment = Segment();
   }
