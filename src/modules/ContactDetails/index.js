@@ -91,6 +91,7 @@ export default class ContactDetails extends RcModule {
     return this._contacts.getPresence(contact, false);
   }
 
+  // for track click to sms
   @proxify
   onClickToSMS() {
     this.store.dispatch({
@@ -98,6 +99,7 @@ export default class ContactDetails extends RcModule {
     });
   }
 
+  // for track click to call
   @proxify
   onClickToCall() {
     this.store.dispatch({

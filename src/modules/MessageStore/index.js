@@ -529,6 +529,7 @@ export default class MessageStore extends Pollable {
 
   @proxify
   async unreadMessage(messageId) {
+    //  for track mark message
     this.store.dispatch({
       type: this.actionTypes.markMessages,
     });
@@ -546,7 +547,7 @@ export default class MessageStore extends Pollable {
     }
   }
 
-
+  // for track mark message
   @proxify
   async unmarkMessages() {
     this.store.dispatch({
@@ -604,7 +605,7 @@ export default class MessageStore extends Pollable {
     this.pushMessages([record]);
   }
 
-  // for track
+  // for track click to sms
   @proxify
   onClickToSMS() {
     this.store.dispatch({
@@ -612,7 +613,7 @@ export default class MessageStore extends Pollable {
     });
   }
 
-  // for track
+  // for track click to call
   @proxify
   onClickToCall({ fromType = '' }) {
     this.store.dispatch({
