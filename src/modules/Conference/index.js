@@ -89,14 +89,14 @@ export default class Conference extends DataFetcher {
 
   // for track invite with text
   @proxify
-  inviteWithText() {
+  onInviteWithText() {
     this.store.dispatch({
       type: this.actionTypes.inviteWithText
     });
   }
   // for track join as host
   @proxify
-  joinAsHost() {
+  onJoinAsHost() {
     this.store.dispatch({
       type: this.actionTypes.joinAsHost
     });

@@ -605,7 +605,7 @@ export default class MessageStore extends Pollable {
     this.pushMessages([record]);
   }
 
-  // for track click to sms
+  // for track click to sms in message list
   @proxify
   onClickToSMS() {
     this.store.dispatch({
@@ -613,7 +613,7 @@ export default class MessageStore extends Pollable {
     });
   }
 
-  // for track click to call
+  // for track click to call in message list
   @proxify
   onClickToCall({ fromType = '' }) {
     this.store.dispatch({

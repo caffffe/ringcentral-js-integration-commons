@@ -293,7 +293,7 @@ export default class Analytics extends RcModule {
   _textClickToDial(action) {
     if (this._messageStore
       && this._messageStore.actionTypes.clickToCall === action.type
-      && action.fromType === 'Text') {
+      && (action.fromType === 'Pager' || action.fromType === 'SMS')) {
       this.track('Click To Dial (Text List)');
     }
   }
@@ -383,7 +383,7 @@ export default class Analytics extends RcModule {
 
       const targets = [{
         eventPostfix: 'Dialer',
-        router: '/',
+        router: '/dialer',
       }, {
         eventPostfix: 'Compose SMS',
         router: '/composeText',
