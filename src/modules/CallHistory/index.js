@@ -232,10 +232,18 @@ export default class CallHistory extends RcModule {
     });
   }
 
+  // for track
   @proxify
   onClickToSMS() {
     this.store.dispatch({
       type: this.actionTypes.clickToSMS
+    });
+  }
+  // for track
+  @proxify
+  onClickToCall() {
+    this.store.dispatch({
+      type: this.actionTypes.clickToCall,
     });
   }
 

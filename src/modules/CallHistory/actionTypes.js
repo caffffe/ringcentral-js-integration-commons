@@ -6,4 +6,5 @@ export default new Enum([
   'addEndedCalls',
   'removeEndedCalls',
   'clickToSMS',
+  'clickToCall',
 ], 'callHistoryAcionTypes');

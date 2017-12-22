@@ -12,4 +12,6 @@ export default new Enum([
   'cleanUp',
   'removeMessage',
   'clickToSMS',
+  'clickToCall',
+  'markMessages',
 ], 'messageStore');

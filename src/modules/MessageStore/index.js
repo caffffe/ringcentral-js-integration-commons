@@ -503,7 +503,7 @@ export default class MessageStore extends Pollable {
   }
 
   @proxify
-  async readMessages({ conversationId, mark = false }) {
+  async readMessages(conversationId) {
     const conversation = this.conversationMap[conversationId];
     if (!conversation) {
       return null;
@@ -517,7 +517,6 @@ export default class MessageStore extends Pollable {
       this.store.dispatch({
         type: this.actionTypes.updateMessages,
         records: updatedMessages,
-        mark,
       });
     } catch (error) {
       console.error(error);
@@ -530,12 +529,14 @@ export default class MessageStore extends Pollable {
 
   @proxify
   async unreadMessage(messageId) {
+    this.store.dispatch({
+      type: this.actionTypes.markMessages,
+    });
     try {
       const message = await this._updateMessageApi(messageId, 'Unread');
       this.store.dispatch({
         type: this.actionTypes.updateMessages,
         records: [message],
-        mark: true,
       });
     } catch (error) {
       console.error(error);
@@ -543,6 +544,14 @@ export default class MessageStore extends Pollable {
         message: messageStoreErrors.unreadFailed,
       });
     }
+  }
+
+
+  @proxify
+  async unmarkMessages() {
+    this.store.dispatch({
+      type: this.actionTypes.markMessages,
+    });
   }
 
   @proxify
@@ -595,12 +604,23 @@ export default class MessageStore extends Pollable {
     this.pushMessages([record]);
   }
 
+  // for track
   @proxify
   onClickToSMS() {
     this.store.dispatch({
       type: this.actionTypes.clickToSMS
     });
   }
+
+  // for track
+  @proxify
+  onClickToCall({ fromType = '' }) {
+    this.store.dispatch({
+      type: this.actionTypes.clickToCall,
+      fromType
+    });
+  }
+
 
   get cache() {
     if (this._storage) {

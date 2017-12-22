@@ -98,6 +98,13 @@ export default class ContactDetails extends RcModule {
     });
   }
 
+  @proxify
+  onClickToCall() {
+    this.store.dispatch({
+      type: this.actionTypes.clickToCall,
+    });
+  }
+
   get contact() {
     return this._selectors.currentContact();
   }

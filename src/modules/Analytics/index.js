@@ -26,7 +26,6 @@ import callingModes from '../CallingSettings/callingModes';
     { dep: 'RouterInteraction', optional: true },
     { dep: 'AnalyticsAdapter', optional: true },
     { dep: 'AnalyticsOptions', optional: true },
-    { dep: 'DialerUI', optional: true },
   ]
 })
 export default class Analytics extends RcModule {
@@ -38,7 +37,6 @@ export default class Analytics extends RcModule {
     messageSender,
     adapter,
     routerInteraction,
-    dialerUI,
     analyticsKey,
     appName,
     appVersion,
@@ -60,7 +58,6 @@ export default class Analytics extends RcModule {
     this._messageSender = messageSender;
     this._adapter = adapter;
     this._router = routerInteraction;
-    this._dialerUI = dialerUI;
     this._analyticsKey = analyticsKey;
     this._appName = appName;
     this._appVersion = appVersion;
@@ -159,6 +156,7 @@ export default class Analytics extends RcModule {
       });
     }
   }
+
 
   _authentication(action) {
     if (this._auth && this._auth.actionTypes.loginSuccess === action.type) {
@@ -293,17 +291,17 @@ export default class Analytics extends RcModule {
   }
 
   _textClickToDial(action) {
-    if (this._dialerUI
-      && this._dialerUI.actionTypes.call === action.type
-      && this._dialerUI.dialerTypes.text === action.clickToDialType) {
+    if (this._messageStore
+      && this._messageStore.actionTypes.clickToCall === action.type
+      && action.fromType === 'Text') {
       this.track('Click To Dial (Text List)');
     }
   }
 
   _voicemailClickToDial(action) {
-    if (this._dialerUI
-      && this._dialerUI.actionTypes.call === action.type
-      && this._dialerUI.dialerTypes.voicemail === action.clickToDialType) {
+    if (this._messageStore
+      && this._messageStore.actionTypes.clickToCall === action.type
+      && action.fromType === 'VoiceMail') {
       this.track('Click To Dial (Voicemail List)');
     }
   }
@@ -322,16 +320,14 @@ export default class Analytics extends RcModule {
 
   _voicemailFlag(action) {
     if (this._messageStore
-      && this._messageStore.actionTypes.updateMessages === action.type
-      && action.mark) {
+      && this._messageStore.actionTypes.markMessages === action.type) {
       this.track('Flag Voicemail');
     }
   }
 
   _contactDetailClickToDial(action) {
-    if (this._dialerUI
-      && this._dialerUI.actionTypes.call === action.type
-      && this._dialerUI.dialerTypes.contactDetail === action.clickToDialType) {
+    if (this._contactDetails
+      && this._contactDetails.actionTypes.clickToCall === action.type) {
       this.track('Click To Dial (Contact Details)');
     }
   }
@@ -344,9 +340,8 @@ export default class Analytics extends RcModule {
   }
 
   _callHistoryClickToDial(action) {
-    if (this._dialerUI
-      && this._dialerUI.actionTypes.call === action.type
-      && this._dialerUI.dialerTypes.callHistory === action.clickToDialType) {
+    if (this._callHistory
+     && this._callHistory.actionTypes.clickToCall === action.type) {
       this.track('Click To dial (Call History)');
     }
   }

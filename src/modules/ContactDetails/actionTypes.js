@@ -5,5 +5,6 @@ export default new Enum([
   ...Object.keys(moduleActionTypes),
   'updateCondition',
   'resetCondition',
-  'clickToSMS'
+  'clickToSMS',
+  'clickToCall'
 ], 'contactDetails');
