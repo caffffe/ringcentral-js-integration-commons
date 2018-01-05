@@ -165,7 +165,7 @@ export default class Messages extends RcModule {
           case messageTypes.all: {
             if (!this.readTextPermissions) {
               return allConversations.filter(
-                conversation => messageIsTextMessage(conversation)
+                conversation => !messageIsTextMessage(conversation)
               );
             }
             return allConversations;
