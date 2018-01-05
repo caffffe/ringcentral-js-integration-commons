@@ -24,6 +24,7 @@ import messageTypes from '../../enums/messageTypes';
     'MessageStore',
     'ExtensionInfo',
     'Auth',
+    'RolesAndPermissions',
     { dep: 'ContactMatcher', optional: true },
     { dep: 'ConversationLogger', optional: true },
     { dep: 'MessagesOptions', optional: true }
@@ -37,6 +38,7 @@ export default class Messages extends RcModule {
    * @param {ExtensionInfo} params.extensionInfo - extensionInfo module instance
    * @param {ContactMatcher} params.contactMatcher - contactMatcher module instance
    * @param {ConversationLogger} params.conversationLogger - conversationLogger module instance
+   * @param {RolesAndPermissions} params.rolesAndPermissions - rolesAndPermissions module instance
    * @param {Number} params.defaultPerPage - default numbers of perPage, default 20
    */
   constructor({
@@ -46,6 +48,7 @@ export default class Messages extends RcModule {
     defaultPerPage = 20,
     contactMatcher,
     conversationLogger,
+    rolesAndPermissions,
     ...options
   }) {
     super({
@@ -57,6 +60,7 @@ export default class Messages extends RcModule {
     this._auth = this::ensureExist(auth, 'auth');
     this._messageStore = this::ensureExist(messageStore, 'messageStore');
     this._extensionInfo = this::ensureExist(extensionInfo, 'extensionInfo');
+    this._rolesAndPermissions = this::ensureExist(rolesAndPermissions, 'rolesAndPermissions');
     this._reducer = getMessagesReducer(this.actionTypes, defaultPerPage);
 
     this.addSelector('uniqueNumbers',
@@ -158,8 +162,14 @@ export default class Messages extends RcModule {
       () => this.typeFilter,
       (allConversations, typeFilter) => {
         switch (typeFilter) {
-          case messageTypes.all:
+          case messageTypes.all: {
+            if (!this.readTextPermissions) {
+              return allConversations.filter(
+                conversation => messageIsTextMessage(conversation)
+              );
+            }
             return allConversations;
+          }
           case messageTypes.text:
             return allConversations.filter(
               conversation => messageIsTextMessage(conversation)
@@ -285,6 +295,7 @@ export default class Messages extends RcModule {
       this._auth.loggedIn &&
       this._messageStore.ready &&
       this._extensionInfo.ready &&
+      this._rolesAndPermissions.ready &&
       (!this._contactMatcher || this._contactMatcher.ready) &&
       (!this._conversationLogger || this._conversationLogger.ready) &&
       this.pending
@@ -308,6 +319,7 @@ export default class Messages extends RcModule {
         !this._auth.loggedIn ||
         !this._messageStore.ready ||
         !this._extensionInfo.ready ||
+        !this._rolesAndPermissions ||
         (this._contactMatcher && !this._contactMatcher.ready) ||
         (this._conversationLogger && !this._conversationLogger.ready)
       ) &&
@@ -385,5 +397,24 @@ export default class Messages extends RcModule {
 
   get uniqueNumbers() {
     return this._selectors.uniqueNumbers();
+  }
+
+  get serviceFeatures() {
+    return this._rolesAndPermissions.serviceFeatures;
+  }
+
+  get readTextPermissions() {
+    return !!(
+      this.serviceFeatures && (
+        (
+          this.serviceFeatures.PagerReceiving &&
+          this.serviceFeatures.PagerReceiving.enabled
+        ) ||
+        (
+          this.serviceFeatures.SMSReceiving &&
+          this.serviceFeatures.SMSReceiving.enabled
+        )
+      )
+    );
   }
 }
