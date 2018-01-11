@@ -163,19 +163,19 @@ export default class Messages extends RcModule {
       (allConversations, typeFilter) => {
         switch (typeFilter) {
           case messageTypes.all: {
-              return allConversations.filter(
-                conversation => {
-                  if (!this._rolesAndPermissions.readTextPermissions)
-                    return !messageIsTextMessage(conversation);
-                  else if (!this._rolesAndPermissions.voicemailPermissions)
-                    return !messageIsVoicemail(conversation);
-                  // else if(!this._rolesAndPermissions.readFaxPermissions) {
-                  //   return !messageIsFaxMessage(conversation);
-                  // }
-                  return true;
-                }   
-              );
-            return allConversations;
+            return allConversations.filter(
+              (conversation) => {
+                if (!this._rolesAndPermissions.readTextPermissions) {
+                  return !messageIsTextMessage(conversation);
+                } else if (!this._rolesAndPermissions.voicemailPermissions) {
+                  return !messageIsVoicemail(conversation);
+                }
+                // else if(!this._rolesAndPermissions.readFaxPermissions) {
+                //   return !messageIsFaxMessage(conversation);
+                // }
+                return true;
+              }
+            );
           }
           case messageTypes.text:
             return allConversations.filter(
