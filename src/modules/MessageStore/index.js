@@ -137,7 +137,8 @@ export default class MessageStore extends Pollable {
         let unreadCounts = 0;
         if (this._rolesAndPermissions.readTextPermissions) {
           unreadCounts += textUnreadCounts;
-        } else if (this._rolesAndPermissions.voicemailPermissions) {
+        }
+        if (this._rolesAndPermissions.voicemailPermissions) {
           unreadCounts += voiceUnreadCounts;
         }
         return unreadCounts;
