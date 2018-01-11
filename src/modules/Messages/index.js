@@ -166,11 +166,13 @@ export default class Messages extends RcModule {
             return allConversations.filter(
               conversation => (
                 (
-                  this._rolesAndPermissions.readTextPermissions || !messageIsTextMessage(conversation)
+                  this._rolesAndPermissions.readTextPermissions ||
+                  !messageIsTextMessage(conversation)
                 )
                 &&
                 (
-                  this._rolesAndPermissions.voicemailPermissions || !messageIsVoicemail(conversation)
+                  this._rolesAndPermissions.voicemailPermissions ||
+                  !messageIsVoicemail(conversation)
                 )
               )
             );
