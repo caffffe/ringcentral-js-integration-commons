@@ -1,0 +1,30 @@
+{
+  "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/active-calls?page=1&perPage=max",
+  "records" : [ {
+    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/call-log/DzZ8jHam0bmgzUA?view=Simple",
+    "id" : "DzZ8jHam0bmgzUA",
+    "sessionId" : "1839234234926020",
+    "startTime" : "2018-03-24T08:05:48.000Z",
+    "type" : "Voice",
+    "direction" : "Outbound",
+    "action" : "RingOut Web",
+    "result" : "In Progress",
+    "to" : {
+      "phoneNumber" : "+123425287464"
+    },
+    "from" : {
+      "name" : "User A"
+    }
+  } ],
+  "paging" : {
+    "page" : 1,
+    "perPage" : 1000,
+    "pageStart" : 0,
+    "pageEnd" : 0
+  },
+  "navigation" : {
+    "firstPage" : {
+      "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/active-calls?page=1&perPage=max"
+    }
+  }
+}
