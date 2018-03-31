@@ -1,0 +1,194 @@
+{
+  "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/device?page=1&perPage=100",
+  "records" : [ {
+    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/device/32015004",
+    "id" : "32015004",
+    "type" : "HardPhone",
+    "sku" : "HP-66",
+    "model" : {
+      "id" : "66",
+      "name" : "Polycom VVX311",
+      "addons" : [ ],
+      "features" : [ "Intercom", "Paging", "BLA" ]
+    },
+    "name" : "lucky boy Polycom VVX-311 Gigabit Ethernet Phone",
+    "status" : "Offline",
+    "extension" : {
+      "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~",
+      "id" : 987654321,
+      "extensionNumber" : "101"
+    },
+    "phoneLines" : [ {
+      "lineType" : "Standalone",
+      "emergencyAddress" : {
+        "required" : true,
+        "localOnly" : false
+      },
+      "phoneInfo" : {
+        "id" : 652082004,
+        "phoneNumber" : "+1234567222",
+        "paymentType" : "Local",
+        "type" : "VoiceFax",
+        "usageType" : "DirectNumber",
+        "country" : {
+          "uri" : "http://platform.ringcentral.com/restapi/v1.0/dictionary/country/1",
+          "id" : "1",
+          "name" : "United States"
+        }
+      }
+    } ],
+    "emergencyServiceAddress" : {
+      "street" : "999 Baker Way",
+      "street2" : "Ste 500",
+      "city" : "San Mateo",
+      "state" : "CA",
+      "country" : "US",
+      "zip" : "94404",
+      "customerName" : "John Smith"
+    },
+    "shipping" : {
+      "address" : {
+        "street" : "App.786 13 Elm Street",
+        "city" : "Foster City",
+        "state" : "CA",
+        "country" : "US",
+        "zip" : "94404",
+        "customerName" : "John Doe"
+      },
+      "method" : {
+        "id" : "1",
+        "name" : "Ground"
+      },
+      "status" : "Initial"
+    },
+    "linePooling" : "Host"
+  }, {
+    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/device/32017004",
+    "id" : "32017004",
+    "type" : "HardPhone",
+    "sku" : "HP-66",
+    "model" : {
+      "id" : "66",
+      "name" : "Polycom VVX311",
+      "addons" : [ ],
+      "features" : [ "Intercom", "Paging", "BLA" ]
+    },
+    "name" : "lucky boy Polycom VVX-311 Gigabit Ethernet Phone",
+    "status" : "Offline",
+    "extension" : {
+      "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~",
+      "id" : 987654321,
+      "extensionNumber" : "101"
+    },
+    "phoneLines" : [ {
+      "lineType" : "Standalone",
+      "emergencyAddress" : {
+        "required" : true,
+        "localOnly" : true
+      },
+      "phoneInfo" : {
+        "id" : 652083004,
+        "phoneNumber" : "+33123456789",
+        "paymentType" : "Local",
+        "type" : "VoiceFax",
+        "usageType" : "DirectNumber",
+        "country" : {
+          "uri" : "http://platform.ringcentral.com/restapi/v1.0/dictionary/country/75",
+          "id" : "75",
+          "name" : "France"
+        }
+      }
+    } ],
+    "emergencyServiceAddress" : {
+      "street" : "710 Rue",
+      "city" : "Paris",
+      "country" : "FR",
+      "zip" : "65311",
+      "customerName" : "Jean"
+    },
+    "shipping" : {
+      "address" : {
+        "street" : "710 Rue",
+        "city" : "Paris",
+        "country" : "FR",
+        "zip" : "65311",
+        "customerName" : "Jean"
+      },
+      "method" : {
+        "id" : "1",
+        "name" : "Ground"
+      },
+      "status" : "Initial"
+    },
+    "linePooling" : "Host"
+  }, {
+    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/device/98765432",
+    "id" : "98765432",
+    "type" : "SoftPhone",
+    "sku" : "DV-1",
+    "name" : "lucky boy RingCentral Phone app",
+    "status" : "Offline",
+    "extension" : {
+      "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~",
+      "id" : 987654321,
+      "extensionNumber" : "101"
+    },
+    "phoneLines" : [ {
+      "lineType" : "Standalone",
+      "emergencyAddress" : {
+        "required" : true,
+        "localOnly" : false
+      },
+      "phoneInfo" : {
+        "id" : 1250612004,
+        "phoneNumber" : "+12345674444",
+        "paymentType" : "Local",
+        "type" : "VoiceFax",
+        "usageType" : "DirectNumber",
+        "country" : {
+          "uri" : "http://platform.ringcentral.com/restapi/v1.0/dictionary/country/1",
+          "id" : "1",
+          "name" : "United States"
+        }
+      }
+    } ],
+    "emergencyServiceAddress" : {
+      "street" : "999 Baker Way",
+      "street2" : "Ste 500",
+      "city" : "San Mateo",
+      "state" : "CA",
+      "country" : "US",
+      "zip" : "94404",
+      "customerName" : "John Smith"
+    },
+    "shipping" : {
+      "address" : {
+        "street" : "999 Baker Way",
+        "street2" : "Ste 500",
+        "city" : "San Mateo",
+        "state" : "CA",
+        "country" : "US",
+        "zip" : "94404",
+        "customerName" : "John Smith"
+      },
+      "status" : "Won't ship"
+    },
+    "linePooling" : "Host"
+  } ],
+  "paging" : {
+    "page" : 1,
+    "totalPages" : 1,
+    "perPage" : 100,
+    "totalElements" : 3,
+    "pageStart" : 0,
+    "pageEnd" : 2
+  },
+  "navigation" : {
+    "firstPage" : {
+      "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/device?page=1&perPage=100"
+    },
+    "lastPage" : {
+      "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/device?page=1&perPage=100"
+    }
+  }
+}

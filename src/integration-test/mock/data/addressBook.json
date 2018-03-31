@@ -1,0 +1,29 @@
+{
+  "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book-sync",
+  "records" : [ {
+    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/1534645004",
+    "availability" : "Alive",
+    "id" : 1534645004,
+    "firstName" : "useruser",
+    "lastName" : "C0532",
+    "homePhone" : "+123456789",
+    "companyPhone" : "+54444883333"
+  }, {
+    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/1609342432",
+    "availability" : "Alive",
+    "id" : 1609342432,
+    "firstName" : "User C1",
+    "homePhone" : "+123465789"
+  }, {
+    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/1648026004",
+    "availability" : "Alive",
+    "id" : 1648026004,
+    "firstName" : "User C2",
+    "homePhone" : "+102201"
+  }],
+  "syncInfo" : {
+    "syncType" : "FSync",
+    "syncToken" : "HgAAAAA4Xhl8AQEAAAAAAAAAlFyGusk",
+    "syncTime" : "2018-03-20T06:31:53.893Z"
+  }
+}
