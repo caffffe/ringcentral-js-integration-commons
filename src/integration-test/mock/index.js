@@ -345,6 +345,13 @@ export function addressBook(mockResponse = {}) {
     url: `begin:${mockServer}/restapi/v1.0/account/~/extension/~/address-book-sync`,
     body: {
       ...addressBookBody,
+      ...{
+        syncInfo: {
+          syncType: callLogBody.syncType,
+          syncToken: callLogBody.syncToken,
+          syncTime: ((new Date(Date.now() + 24 * 60 * 60 * 1000))).toISOString()
+        }
+      },
       ...mockResponse,
     },
     isOnce: false,
@@ -356,6 +363,13 @@ export function callLog(mockResponse = {}) {
     url: `begin:${mockServer}/restapi/v1.0/account/~/extension/~/call-log-sync`,
     body: {
       ...callLogBody,
+      ...{
+        syncInfo: {
+          syncType: callLogBody.syncType,
+          syncToken: callLogBody.syncToken,
+          syncTime: ((new Date(Date.now() + 24 * 60 * 60 * 1000))).toISOString()
+        }
+      },
       ...mockResponse,
     },
     isOnce: false,
@@ -395,6 +409,48 @@ export function activeCalls(mockResponse = {}) {
 
 export function restore() {
   fetchMock.restore();
+}
+
+export function mockForbidden({
+  method = 'GET',
+  path,
+  url,
+  body = ''
+}) {
+  mockApi({
+    method,
+    path,
+    body,
+    url,
+    status: 403,
+  });
+}
+
+export function mockClient(client) {
+  client.service = createSDK({});
+}
+
+export function ringOut(mockResponse = {}) {
+  mockApi({
+    isOnce: false,
+    method: 'POST',
+    url: `${mockServer}/restapi/v1.0/account/~/extension/~/ring-out`,
+    body: {
+      ...ringOutBody,
+      ...mockResponse,
+    }
+  });
+}
+
+export function ringOutUpdate(mockResponse = {}) {
+  mockApi({
+    isOnce: false,
+    url: `begin:${mockServer}/restapi/v1.0/account/~/extension/~/ring-out/`,
+    body: {
+      ...ringOutBody,
+      ...mockResponse,
+    }
+  });
 }
 
 export function mockForLogin({
@@ -440,44 +496,4 @@ export function mockForLogin({
   }
 }
 
-export function mockForbidden({
-  method = 'GET',
-  path,
-  url,
-  body = ''
-}) {
-  mockApi({
-    method,
-    path,
-    body,
-    url,
-    status: 403,
-  });
-}
 
-export function mockClient(client) {
-  client.service = createSDK({});
-}
-
-export function ringOut(mockResponse = {}) {
-  mockApi({
-    isOnce: false,
-    method: 'POST',
-    url: `${mockServer}/restapi/v1.0/account/~/extension/~/ring-out`,
-    body: {
-      ...ringOutBody,
-      ...mockResponse,
-    }
-  });
-}
-
-export function ringOutUpdate(mockResponse = {}) {
-  mockApi({
-    isOnce: false,
-    url: `begin:${mockServer}/restapi/v1.0/account/~/extension/~/ring-out/`,
-    body: {
-      ...ringOutBody,
-      ...mockResponse,
-    }
-  });
-}
