@@ -1,29 +1,39 @@
 {
-  "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book-sync",
-  "records" : [{
-    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/1534645243",
+  "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact?phoneNumber=16502223344&phoneNumber=16503334455&sortBy=FirstName",
+  "records" : [ {
+    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact/405030022008",
     "availability" : "Alive",
-    "id" : 1534645243,
-    "firstName" : "useruser",
-    "lastName" : "C0532",
-    "homePhone" : "+123456789",
-    "companyPhone" : "+54444883333"
+    "id" : 405030022008,
+    "firstName" : "Leo",
+    "lastName" : "Wonders",
+    "birthday" : "1970-01-01T00:00:00.000Z",
+    "mobilePhone" : "+16503334455"
   }, {
-    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/1609342432",
+    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact/405030021008",
     "availability" : "Alive",
-    "id" : 1609342432,
-    "firstName" : "User C1",
-    "homePhone" : "+123465789"
-  }, {
-    "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/1648026004",
-    "availability" : "Alive",
-    "id" : 1648026004,
-    "firstName" : "User C2",
-    "homePhone" : "+102201"
-  }],
-  "syncInfo" : {
-    "syncType" : "FSync",
-    "syncToken" : "HgAAAAA4Xhl8AQEAAAAAAAAAlFyGusk",
-    "syncTime" : "2018-04-20T06:31:53.893Z"
+    "id" : 405030021008,
+    "firstName" : "Paul",
+    "lastName" : "Smith",
+    "birthday" : "1970-01-01T00:00:00.000Z",
+    "mobilePhone" : "+16502223344"
+  } ],
+  "paging" : {
+    "page" : 1,
+    "totalPages" : 1,
+    "perPage" : 100,
+    "totalElements" : 2,
+    "pageStart" : 0,
+    "pageEnd" : 1
+  },
+  "navigation" : {
+    "firstPage" : {
+      "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact?phoneNumber=16502223344&phoneNumber=16503334455&sortBy=FirstName&page=1&perPage=100"
+    },
+    "lastPage" : {
+      "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact?phoneNumber=16502223344&phoneNumber=16503334455&sortBy=FirstName&page=1&perPage=100"
+    }
+  },
+  "groups" : {
+    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/group"
   }
 }

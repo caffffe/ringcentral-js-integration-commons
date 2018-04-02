@@ -1,9 +1,35 @@
 {
-  "uri" : "http://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/call-log-sync?syncType=FSync&recordCount=250&dateFrom=2018-04-13T16:00:00.000Z",
-  "records" : [ ],
-  "syncInfo" : {
-    "syncType" : "FSync",
-    "syncToken" : "FAMAAAFiIBb8AAQAAAFiR0G-vAgAAAAAOF4ZfA4AAAFcOQzrWBEAEQAxADUAMgAwADkANQA2ADgAMAAwADAAMAAwAF8AMABfADASAAABYkdBvrwUARUAGAAsAZ7H",
-    "syncTime" : "2018-04-21T06:31:53.788Z"
+  "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/401494647008/extension/401494647008/call-log?view=Simple&showBlocked=true&dateFrom=2017-09-03T12:34:00.000Z&page=1&perPage=2",
+  "records" : [ {
+    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/401494647008/extension/401494647008/call-log/IWvNToLkbo-7zUA?view=Simple",
+    "id" : "IWvNToLkbo-7zUA",
+    "sessionId" : "404036325008",
+    "startTime" : "2017-09-04T12:31:50.441Z",
+    "duration" : 5,
+    "type" : "Voice",
+    "direction" : "Outbound",
+    "action" : "RingOut Web",
+    "result" : "Call connected",
+    "to" : {
+      "phoneNumber" : "+16505556678"
+    },
+    "from" : {
+      "phoneNumber" : "+18552001907",
+      "name" : "John Smith"
+    }
+  }],
+  "paging" : {
+    "page" : 1,
+    "perPage" : 2,
+    "pageStart" : 0,
+    "pageEnd" : 1
+  },
+  "navigation" : {
+    "nextPage" : {
+      "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/401494647008/extension/401494647008/call-log?view=Simple&showBlocked=true&dateFrom=2017-09-03T12:34:00.000Z&page=2&perPage=2"
+    },
+    "firstPage" : {
+      "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/401494647008/extension/401494647008/call-log?view=Simple&showBlocked=true&dateFrom=2017-09-03T12:34:00.000Z&page=1&perPage=2"
+    }
   }
 }
