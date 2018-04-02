@@ -347,8 +347,8 @@ export function addressBook(mockResponse = {}) {
       ...addressBookBody,
       ...{
         syncInfo: {
-          syncType: callLogBody.syncType,
-          syncToken: callLogBody.syncToken,
+          syncType: addressBookBody.syncType,
+          syncToken: addressBookBody.syncToken,
           syncTime: ((new Date(Date.now() + 24 * 60 * 60 * 1000))).toISOString()
         }
       },
@@ -358,47 +358,6 @@ export function addressBook(mockResponse = {}) {
   });
 }
 
-export function callLog(mockResponse = {}) {
-  mockApi({
-    url: `begin:${mockServer}/restapi/v1.0/account/~/extension/~/call-log-sync`,
-    body: {
-      ...callLogBody,
-      ...mockResponse,
-    },
-    isOnce: false,
-  });
-}
-
-export function device(mockResponse = {}) {
-  mockApi({
-    url: `begin:${mockServer}/restapi/v1.0/account/~/extension/~/device`,
-    body: {
-      ...deviceBody,
-      ...mockResponse,
-    }
-  });
-}
-
-export function conferencing(mockResponse = {}) {
-  mockApi({
-    path: '/restapi/v1.0/account/~/extension/~/conferencing',
-    body: {
-      ...conferencingBody,
-      ...mockResponse,
-    }
-  });
-}
-
-export function activeCalls(mockResponse = {}) {
-  mockApi({
-    method: 'GET',
-    url: `begin:${mockServer}/restapi/v1.0/account/~/extension/~/active-calls`,
-    body: {
-      ...activeCallsBody,
-      ...mockResponse,
-    }
-  });
-}
 
 export function callLog(mockResponse = {}) {
   mockApi({
