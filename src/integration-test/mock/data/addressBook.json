@@ -1,39 +1,30 @@
 {
-  "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact?phoneNumber=16502223344&phoneNumber=16503334455&sortBy=FirstName",
-  "records" : [ {
-    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact/405030022008",
+  "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book-sync?syncType=FSync&perPage=2110",
+  "records" : [{
+    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/3633141020",
     "availability" : "Alive",
-    "id" : 405030022008,
-    "firstName" : "Leo",
-    "lastName" : "Wonders",
-    "birthday" : "1970-01-01T00:00:00.000Z",
-    "mobilePhone" : "+16503334455"
+    "id" : 3633141020,
+    "firstName" : "User",
+    "lastName" : "F",
+    "homePhone" : "+123411678978"
   }, {
-    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact/405030021008",
+    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/12341167891",
     "availability" : "Alive",
-    "id" : 405030021008,
-    "firstName" : "Paul",
-    "lastName" : "Smith",
-    "birthday" : "1970-01-01T00:00:00.000Z",
-    "mobilePhone" : "+16502223344"
-  } ],
-  "paging" : {
-    "page" : 1,
-    "totalPages" : 1,
-    "perPage" : 100,
-    "totalElements" : 2,
-    "pageStart" : 0,
-    "pageEnd" : 1
-  },
-  "navigation" : {
-    "firstPage" : {
-      "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact?phoneNumber=16502223344&phoneNumber=16503334455&sortBy=FirstName&page=1&perPage=100"
-    },
-    "lastPage" : {
-      "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/contact?phoneNumber=16502223344&phoneNumber=16503334455&sortBy=FirstName&page=1&perPage=100"
-    }
-  },
-  "groups" : {
-    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/403800692008/extension/403800692008/address-book/group"
+    "id" : 3633142020,
+    "firstName" : "User",
+    "lastName" : "E3",
+    "homePhone" : "+123411678978"
+  }, {
+    "uri" : "https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/address-book/contact/12341167890",
+    "availability" : "Alive",
+    "id" : 12341167890,
+    "firstName" : "user",
+    "lastName" : "D",
+    "homePhone" : "+142424441162"
+  }],
+  "syncInfo" : {
+    "syncType" : "FSync",
+    "syncToken" : "HgAAAABInlj8CQEAAAAAAAAAFmdI0cg",
+    "syncTime" : "2018-04-02T14:23:06.996Z"
   }
 }
